@@ -1,0 +1,29 @@
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Basic configuration
+  reactStrictMode: false,
+  
+  // Configure images to allow external domains
+  images: {
+    domains: ['images.unsplash.com'],
+    unoptimized: true,
+  },
+  
+  // Disable source maps in production
+  productionBrowserSourceMaps: false,
+  
+  // Use custom directory to avoid permission issues
+  distDir: 'custom-next',
+  
+  // Disable telemetry
+  telemetry: {
+    disabled: true
+  },
+  
+  // Explicitly disable tracing
+  tracing: false,
+};
+
+module.exports = nextConfig;
+  
