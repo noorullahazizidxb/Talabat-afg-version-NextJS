@@ -8,6 +8,7 @@ import { Menu, X, Search, User, ShoppingBag } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 const navItems = [
+  { name: 'Back Home', href: '/' },
   { name: 'Restaurants', href: '/restaurants' },
   { name: 'Groceries', href: '/grocery' },
   { name: 'Flowers', href: '/category/flowers' },
