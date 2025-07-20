@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import { useTheme, cn } from '@/utils/theme'
 
 const navItems = [
-{ name: ‘Home’, href: ‘/’ },
+{ name: 'Back Home', href: '/' },
   { name: 'About', href: '/corporate/about' },
   { name: 'Our Menu', href: '/corporate/menu' },
   { name: 'Sustainability', href: '/corporate/sustainability' },
