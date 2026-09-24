@@ -1,0 +1,151 @@
+// Prisma schema — supports SQLite (development) and MySQL (production)
+// ─── Dev  : DATABASE_URL=file:./dev.db
+// ─── Prod : DATABASE_URL=mysql://user:pass@host:3306/db  (set in Vercel env)
+
+generator client {
+  provider        = "prisma-client-js"
+  // Use the bundled WASM engine – no binary download needed
+  engineType      = "library"
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  // Switch provider via DATABASE_PROVIDER env var.
+  // Defaults to "sqlite" when the var is absent.
+  provider = env("DATABASE_PROVIDER")
+  url      = env("DATABASE_URL")
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  phone     String?
+  avatar    String?
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+  addresses Address[]
+
+  @@index([email])
+}
+
+enum Role {
+  CUSTOMER
+  VENDOR
+  ADMIN
+}
+
+model Address {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  label     String   @default("Home")
+  street    String
+  city      String
+  country   String   @default("AF")
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id          Int          @id @default(autoincrement())
+  slug        String       @unique
+  name        String
+  icon        String?
+  image       String?
+  sortOrder   Int          @default(0)
+  restaurants Restaurant[]
+
+  @@index([slug])
+}
+
+model Restaurant {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  name        String
+  description String?
+  logo        String?
+  coverImage  String?
+  cuisine     String?
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  deliveryMin Int      @default(30)
+  deliveryFee Float    @default(0)
+  minOrder    Float    @default(0)
+  isOpen      Boolean  @default(true)
+  categoryId  Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category  Category?   @relation(fields: [categoryId], references: [id])
+  menuItems MenuItem[]
+  orders    Order[]
+
+  @@index([slug])
+  @@index([categoryId])
+}
+
+model MenuItem {
+  id           Int        @id @default(autoincrement())
+  restaurantId Int
+  name         String
+  description  String?
+  price        Float
+  image        String?
+  isAvailable  Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  restaurant Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@index([restaurantId])
+}
+
+model Order {
+  id           Int         @id @default(autoincrement())
+  userId       Int
+  restaurantId Int
+  status       OrderStatus @default(PENDING)
+  total        Float
+  deliveryFee  Float       @default(0)
+  notes        String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id])
+  restaurant Restaurant  @relation(fields: [restaurantId], references: [id])
+  items      OrderItem[]
+
+  @@index([userId])
+  @@index([restaurantId])
+  @@index([status])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+model OrderItem {
+  id         Int   @id @default(autoincrement())
+  orderId    Int
+  menuItemId Int
+  quantity   Int   @default(1)
+  unitPrice  Float
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id])
+
+  @@index([orderId])
+}

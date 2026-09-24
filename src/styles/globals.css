@@ -1,101 +1,190 @@
-/* Global Styles */
-/* styles/globals.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* TailwindCSS v4 – single entry point */
+@import "tailwindcss";
 
-html {
-  scroll-behavior: smooth;
-}
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* =========================================================
+   Design tokens via @theme (TailwindCSS v4 CSS config)
+   ========================================================= */
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Brand palette – orange-based with deep neutrals */
+  --color-brand-50:  #fff7ed;
+  --color-brand-100: #ffedd5;
+  --color-brand-200: #fed7aa;
+  --color-brand-300: #fdba74;
+  --color-brand-400: #fb923c;
+  --color-brand-500: #f97316;
+  --color-brand-600: #ea580c;
+  --color-brand-700: #c2410c;
+  --color-brand-800: #9a3412;
+  --color-brand-900: #7c2d12;
+
+  /* Surface tokens */
+  --color-surface-light: #f8fafc;
+  --color-surface-dark:  #0f172a;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Radius */
+  --radius-pill: 9999px;
+  --radius-card: 1rem;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px 0 rgb(0 0 0 / 0.08);
+  --shadow-card-hover: 0 8px 32px 0 rgb(0 0 0 / 0.14);
 }
 
-@media (prefers-color-scheme: dark) {
+/* =========================================================
+   Base styles
+   ========================================================= */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #0f172a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0f172a;
+      --foreground: #f1f5f9;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Focus visible ring */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* =========================================================
+   Component utilities
+   ========================================================= */
+@layer components {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* Card */
+  .card {
+    background: white;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+  }
+
+  /* Pill button */
+  .btn-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background-color: var(--color-brand-500);
+    color: white;
+    border: 2px solid transparent;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-brand-600);
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+  }
+
+  .btn-outline:hover {
+    background-color: rgb(255 255 255 / 0.15);
+  }
+
+  /* Glass morphism panel */
+  .glass {
+    backdrop-filter: blur(12px) saturate(180%);
+    background: rgb(255 255 255 / 0.75);
+    border: 1px solid rgb(255 255 255 / 0.4);
+  }
+
+  .glass-dark {
+    backdrop-filter: blur(12px) saturate(180%);
+    background: rgb(15 23 42 / 0.75);
+    border: 1px solid rgb(255 255 255 / 0.1);
+  }
+
+  /* Section title */
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  /* Input */
+  .input-base {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border-radius: 0.5rem;
+    border: 1.5px solid #e2e8f0;
+    background: white;
+    font-size: 0.9375rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .input-base:focus {
+    outline: none;
+    border-color: var(--color-brand-500);
+    box-shadow: 0 0 0 3px rgb(249 115 22 / 0.15);
+  }
 }
 
-
-.layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
+/* =========================================================
+   Legacy styles (kept for compatibility)
+   ========================================================= */
 .site-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.site-header .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #ff0000;
-}
-
-.site-header nav ul {
-  display: flex;
-  list-style: none;
-  gap: 1rem;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
 }
 
 .site-footer {
-  background-color: #333;
+  background-color: #1e293b;
   color: white;
   padding: 1rem;
   text-align: center;
-}
-
-.home-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-.featured-sections {
-  display: flex;
-  gap: 1rem;
-}
-
-.section-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.3s ease;
-}
-
-.section-card:hover {
-  transform: scale(1.05);
-}
-
-.section-card .card-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.section-card .card-content {
-  padding: 1rem;
 }

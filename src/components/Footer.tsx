@@ -2,8 +2,11 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, Heart } from 'lucide-react'
-import { cn } from '../utils/theme'
+import {
+  Facebook, Twitter, Instagram, Linkedin,
+  Mail, Phone, MapPin, Heart,
+  ArrowUpRight,
+} from 'lucide-react'
 
 const footerLinks = [
   {
@@ -42,77 +45,60 @@ const footerLinks = [
 ]
 
 const socialLinks = [
-  { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
-  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
+  { icon: Facebook,  href: 'https://facebook.com',  label: 'Facebook' },
+  { icon: Twitter,   href: 'https://twitter.com',   label: 'Twitter' },
   { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-  { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
+  { icon: Linkedin,  href: 'https://linkedin.com',  label: 'LinkedIn' },
 ]
 
 const contactInfo = [
-  { icon: Mail, content: 'support@talabat.com' },
-  { icon: Phone, content: '+971 800 TALABAT (825 2228)' },
-  { icon: MapPin, content: 'Dubai, United Arab Emirates' },
+  { icon: Mail,   content: 'support@talabat.com' },
+  { icon: Phone,  content: '+93 (0) 70 000 0000' },
+  { icon: MapPin, content: 'Kabul, Afghanistan' },
 ]
 
 export default function Footer() {
   return (
-    <footer className={cn(
-      "pt-12 pb-8 transition-colors duration-200",
-      "bg-surface-light dark:bg-surface-dark",
-      "border-t border-gray-200 dark:border-gray-800"
-    )}>
-      <div className="container mx-auto px-4">
-        {/* Main footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+    <footer className="bg-slate-900 dark:bg-slate-950 text-slate-300">
+      <div className="container mx-auto px-4 pt-14 pb-8">
+
+        {/* Main grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 mb-12">
+
           {/* Brand column */}
           <div className="lg:col-span-2">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="space-y-4"
+              className="space-y-5"
             >
-              <Link href="/">
-                <div className={cn(
-                  "text-2xl font-bold flex items-center gap-2 transition-colors duration-200",
-                  "text-accent-600 dark:text-accent-400"
-                )}>
-                  talabat
-                </div>
+              <Link href="/" className="inline-block">
+                <span className="text-2xl font-extrabold text-white tracking-tight">
+                  talabat<span className="text-orange-500">.</span>
+                </span>
               </Link>
-              <p className={cn(
-                "max-w-md transition-colors duration-200",
-                "text-gray-600 dark:text-gray-400"
-              )}>
-                Your favorite food, groceries, flowers and more, delivered fast to your door.
+
+              <p className="text-sm leading-relaxed text-slate-400 max-w-xs">
+                Your favourite food, groceries, flowers and more — delivered fast to your door across Afghanistan.
               </p>
-              
-              {/* Contact info */}
-              <div className="space-y-2 mt-6">
+
+              {/* Contact */}
+              <ul className="space-y-2.5">
                 {contactInfo.map((item, i) => {
                   const Icon = item.icon
                   return (
-                    <motion.div 
-                      key={i}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1, duration: 0.5 }}
-                      viewport={{ once: true }}
-                      className={cn(
-                        "flex items-center gap-3 transition-colors duration-200",
-                        "text-gray-600 dark:text-gray-400"
-                      )}
-                    >
-                      <Icon className="h-4 w-4 text-accent-500" />
-                      <span>{item.content}</span>
-                    </motion.div>
+                    <li key={i} className="flex items-center gap-2.5 text-sm text-slate-400">
+                      <Icon className="h-4 w-4 text-orange-400 shrink-0" />
+                      {item.content}
+                    </li>
                   )
                 })}
-              </div>
-              
-              {/* Social links */}
-              <div className="flex gap-4 mt-6">
+              </ul>
+
+              {/* Social */}
+              <div className="flex gap-2 pt-1">
                 {socialLinks.map((social, i) => {
                   const Icon = social.icon
                   return (
@@ -121,86 +107,64 @@ export default function Footer() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.1, duration: 0.3 }}
-                      viewport={{ once: true }}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      className={cn(
-                        "p-2 rounded-full",
-                        "bg-gray-100 dark:bg-gray-800",
-                        "text-gray-700 dark:text-gray-300",
-                        "hover:bg-accent-100 dark:hover:bg-accent-900",
-                        "hover:text-accent-600 dark:hover:text-accent-400",
-                        "transition-colors duration-200"
-                      )}
+                      whileHover={{ scale: 1.12, y: -2 }}
+                      whileTap={{ scale: 0.92 }}
+                      className="p-2 rounded-lg bg-slate-800 hover:bg-orange-500 text-slate-300 hover:text-white transition-colors duration-200"
                       aria-label={social.label}
                     >
-                      <Icon className="h-5 w-5" />
+                      <Icon className="h-4 w-4" />
                     </motion.a>
                   )
                 })}
               </div>
             </motion.div>
           </div>
-          
+
           {/* Links columns */}
           {footerLinks.map((section, i) => (
-            <motion.div 
+            <motion.div
               key={section.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
+              transition={{ delay: i * 0.08, duration: 0.4 }}
               viewport={{ once: true }}
             >
-              <h3 className={cn(
-                "font-semibold mb-4 transition-colors duration-200",
-                "text-gray-900 dark:text-gray-100"
-              )}>{section.title}</h3>
-              <ul className="space-y-2">
-                {section.links.map((link, j) => (
-                  <motion.li 
-                    key={link.label}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: (i * 0.1) + (j * 0.05), duration: 0.3 }}
-                    viewport={{ once: true }}
-                  >
-                    <Link 
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">
+                {section.title}
+              </h4>
+              <ul className="space-y-2.5">
+                {section.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
                       href={link.href}
-                      className={cn(
-                        "transition-colors duration-200",
-                        "text-gray-600 dark:text-gray-400",
-                        "hover:text-accent-600 dark:hover:text-accent-400"
-                      )}
+                      className="group flex items-center gap-1 text-sm text-slate-400 hover:text-orange-400 transition-colors duration-150"
                     >
                       {link.label}
+                      <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
             </motion.div>
           ))}
         </div>
-        
-        {/* Footer bottom */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-          viewport={{ once: true }}
-          className={cn(
-            "pt-8 mt-8 text-center text-sm transition-colors duration-200",
-            "border-t border-gray-200 dark:border-gray-800",
-            "text-gray-600 dark:text-gray-400"
-          )}
-        >
-          <p className="flex items-center justify-center gap-1">
-            ©2025 talabat.com – Built with <Heart className="h-4 w-4 text-red-500 animate-pulse" fill="currentColor" /> in the UAE
+
+        {/* Divider */}
+        <div className="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+          <p className="flex items-center gap-1">
+            © 2025 talabat.com — built with{' '}
+            <Heart className="h-3.5 w-3.5 text-red-500" fill="currentColor" />
+            {' '}for Afghanistan
           </p>
-        </motion.div>
+          <p>
+            Hosted on{' '}
+            <a href="https://note-app.devminds.net" className="text-orange-400 hover:underline">
+              note-app.devminds.net
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   )
 }
+

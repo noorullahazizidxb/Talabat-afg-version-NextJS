@@ -1,22 +1,28 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Basic configuration
-  reactStrictMode: false,
-  
-  // Configure images to allow external domains
+  reactStrictMode: true,
+
+  // Allow images from external domains
   images: {
-    domains: ['images.unsplash.com'],
-    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.githubusercontent.com',
+      },
+    ],
   },
-  
-  // Use custom directory to avoid permission issues
-  distDir: '.next-temp',
-  
-  // Disable source maps in production
+
+  // Disable source maps in production for smaller bundles
   productionBrowserSourceMaps: false,
-  
-  // Enable static HTML export
-  output: 'export',
+
+  // Experimental: enable turbopack for faster dev
+  experimental: {
+    turbo: {},
+  },
 };
 
 module.exports = nextConfig;
