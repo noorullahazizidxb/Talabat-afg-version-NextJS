@@ -1,111 +1,112 @@
-'use client'
+﻿'use client'
 
-import { motion } from 'framer-motion'
-import Image from 'next/image'
 import Link from 'next/link'
-import { Star, Clock, DollarSign, Truck, Badge } from 'lucide-react'
-import { cn } from '../utils/theme'
+import Image from 'next/image'
+import { Star, Clock, Truck } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/Card'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 
-interface RestaurantCardProps {
+export interface RestaurantCardData {
   name: string
-  cuisine: string
-  time: string
-  fee: string
-  rating: number | string
+  cuisine?: string
+  /** Delivery time as string ("30 mins") or number (30) */
+  time: string | number
+  fee: string | number
+  rating: string | number
   logo: string
   href?: string
   index?: number
   featured?: boolean
   coverImage?: string
+  isOpen?: boolean
+}
+
+export function RestaurantCardSkeleton() {
+  return (
+    <Card className="overflow-hidden">
+      <Skeleton className="h-28 w-full" />
+      <CardContent className="p-4 flex gap-3">
+        <Skeleton className="h-14 w-14 rounded-xl shrink-0" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-3 w-1/2" />
+          <Skeleton className="h-3 w-2/3" />
+        </div>
+      </CardContent>
+    </Card>
+  )
 }
 
 export default function RestaurantCard({
-  name,
-  cuisine,
-  time,
-  fee,
-  rating,
-  logo,
-  href = '#',
-  index = 0,
-  featured = false,
-  coverImage,
-}: RestaurantCardProps) {
-  const ratingNum =
-    typeof rating === 'number'
-      ? rating
-      : parseFloat(String(rating)) || 0
+  name, cuisine, time, fee, rating, logo, href = '#',
+  index = 0, featured = false, coverImage, isOpen = true,
+}: RestaurantCardData) {
+  const ratingNum = parseFloat(String(rating)) || 0
+  const feeStr    = fee === 'Free' || fee === 0 || fee === '$0' ? 'Free' : String(fee)
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.35, delay: index * 0.05, type: 'spring', stiffness: 80 }}
-      className={cn(
-        'group relative bg-white dark:bg-slate-900 rounded-2xl overflow-hidden',
-        'border border-slate-100 dark:border-slate-800',
-        'shadow-sm hover:shadow-lg transition-shadow duration-300',
-        featured && 'ring-2 ring-orange-500 ring-offset-2 dark:ring-offset-slate-950'
-      )}
-    >
-      <Link href={href} className="block">
-        {/* Cover image strip */}
-        {coverImage && (
+    <Card className={cn(
+      'overflow-hidden group transition-all duration-300',
+      'hover:shadow-lg hover:-translate-y-0.5',
+      featured && 'ring-2 ring-primary ring-offset-2 ring-offset-background',
+      !isOpen && 'opacity-60'
+    )}>
+      <Link href={href} className="block outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg">
+        {/* Cover image */}
+        {coverImage ? (
           <div className="relative h-28 overflow-hidden">
-            <Image
-              src={coverImage}
-              alt=""
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
+            <Image src={coverImage} alt="" fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
           </div>
+        ) : (
+          <div className="h-2 bg-gradient-to-r from-primary/80 to-orange-400" />
         )}
 
-        <div className="p-4 flex gap-3">
+        <CardContent className="p-4 flex gap-3">
           {/* Logo */}
-          <div className="relative shrink-0">
-            <div className={cn(
-              'relative w-14 h-14 rounded-xl overflow-hidden border-2',
-              coverImage ? '-mt-7 shadow-lg border-white dark:border-slate-900' : 'border-slate-100 dark:border-slate-700'
-            )}>
-              <Image src={logo} alt={name} fill className="object-cover" />
-            </div>
-            {featured && (
-              <span className="absolute -top-1.5 -right-1.5 bg-orange-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-                TOP
-              </span>
-            )}
+          <div className={cn(
+            'relative shrink-0 w-14 h-14 rounded-xl overflow-hidden border-2 border-background shadow-md',
+            coverImage && '-mt-7'
+          )}>
+            <Image src={logo} alt={name} fill className="object-cover" />
           </div>
 
           {/* Info */}
           <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate group-hover:text-orange-500 transition-colors">
-              {name}
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">{cuisine}</p>
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                {name}
+              </h3>
+              {featured && <Badge variant="default" className="shrink-0 text-[10px]">TOP</Badge>}
+              {!isOpen && <Badge variant="secondary" className="shrink-0 text-[10px]">Closed</Badge>}
+            </div>
 
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-slate-600 dark:text-slate-300">
-              <span className="flex items-center gap-1">
-                <Star className="h-3.5 w-3.5 text-amber-400" fill="currentColor" />
+            {cuisine && (
+              <p className="text-xs text-muted-foreground mt-0.5 truncate">{cuisine}</p>
+            )}
+
+            <div className="flex flex-wrap items-center gap-3 mt-2">
+              <span className="flex items-center gap-1 text-xs font-medium">
+                <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
                 {ratingNum.toFixed(1)}
               </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5 text-slate-400" />
-                {time}
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                {typeof time === 'number' ? `${time} min` : time}
               </span>
-              <span className="flex items-center gap-1">
-                <Truck className="h-3.5 w-3.5 text-slate-400" />
-                {fee === 'Free' || fee === '$0' ? (
-                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">Free</span>
-                ) : fee}
+              <span className="flex items-center gap-1 text-xs">
+                <Truck className="h-3.5 w-3.5 text-muted-foreground" />
+                {feeStr === 'Free'
+                  ? <span className="text-success font-medium">Free delivery</span>
+                  : <span className="text-muted-foreground">{feeStr}</span>
+                }
               </span>
             </div>
           </div>
-        </div>
+        </CardContent>
       </Link>
-    </motion.div>
+    </Card>
   )
 }
-

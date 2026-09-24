@@ -1,8 +1,12 @@
-'use client'
+﻿'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
-import { Star, Truck, Tag, X } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Star, Truck, Tag, X, SlidersHorizontal } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
 
 export interface FilterState {
   cuisines: string[]
@@ -10,164 +14,137 @@ export interface FilterState {
   sortBy: 'rating' | 'delivery_time' | 'price'
   deals: boolean
   freeDelivery: boolean
-  pickup: boolean
+  topRated: boolean
 }
 
-const cuisineOptions = [
+const CUISINE_OPTIONS = [
   '🍔 Burgers', '🍣 Sushi', '🍕 Pizza',
-  '🥗 Salad', '🍰 Dessert', '🌱 Vegan',
-  '🍛 Indian', '🍜 Asian',
+  '🥗 Salad',   '🍰 Dessert', '🌱 Vegan',
+  '🍛 Indian',  '🍜 Asian',
 ]
 
-export default function FiltersPanel({
-  onFilterChange,
-}: {
+const SORT_OPTIONS: { value: FilterState['sortBy']; label: string }[] = [
+  { value: 'rating',        label: '⭐ Rating' },
+  { value: 'delivery_time', label: '🕐 Delivery time' },
+  { value: 'price',         label: '💰 Price' },
+]
+
+interface FiltersPanelProps {
   onFilterChange?: (filters: FilterState) => void
-}) {
-  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([])
-  const [priceRange, setPriceRange] = useState(0)
-  const [sortBy, setSortBy] = useState<FilterState['sortBy']>('rating')
-  const [deals, setDeals] = useState(false)
+}
+
+export default function FiltersPanel({ onFilterChange }: FiltersPanelProps) {
+  const [cuisines, setCuisines]         = useState<string[]>([])
+  const [priceRange, setPriceRange]     = useState(0)
+  const [sortBy, setSortBy]             = useState<FilterState['sortBy']>('rating')
+  const [deals, setDeals]               = useState(false)
   const [freeDelivery, setFreeDelivery] = useState(false)
-  const [pickup, setPickup] = useState(false)
+  const [topRated, setTopRated]         = useState(false)
 
   const notify = (partial: Partial<FilterState> = {}) => {
-    onFilterChange?.({
-      cuisines: selectedCuisines,
-      priceRange,
-      sortBy,
-      deals,
-      freeDelivery,
-      pickup,
-      ...partial,
-    })
+    onFilterChange?.({ cuisines, priceRange, sortBy, deals, freeDelivery, topRated, ...partial })
   }
 
-  const toggleCuisine = (c: string) => {
-    const next = selectedCuisines.includes(c)
-      ? selectedCuisines.filter((x) => x !== c)
-      : [...selectedCuisines, c]
-    setSelectedCuisines(next)
+  const toggle = (c: string) => {
+    const next = cuisines.includes(c) ? cuisines.filter((x) => x !== c) : [...cuisines, c]
+    setCuisines(next)
     notify({ cuisines: next })
   }
 
+  const hasFilters = cuisines.length > 0 || priceRange > 0 || deals || freeDelivery || topRated
+
   const clearAll = () => {
-    setSelectedCuisines([])
-    setPriceRange(0)
-    setDeals(false)
-    setFreeDelivery(false)
-    setPickup(false)
-    notify({ cuisines: [], priceRange: 0, deals: false, freeDelivery: false, pickup: false })
+    setCuisines([]); setPriceRange(0); setDeals(false); setFreeDelivery(false); setTopRated(false)
+    notify({ cuisines: [], priceRange: 0, deals: false, freeDelivery: false, topRated: false })
   }
 
-  const hasFilters = selectedCuisines.length > 0 || priceRange > 0 || deals || freeDelivery || pickup
-
   return (
-    <motion.aside
-      initial={{ x: -16, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.35 }}
-      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-5 space-y-6 sticky top-24"
-    >
+    <motion.aside initial={{ x: -12, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+      className="bg-card text-card-foreground rounded-xl border border-border shadow-sm p-5 space-y-5 sticky top-24">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-slate-800 dark:text-slate-200">Filters</h3>
+        <div className="flex items-center gap-2 font-semibold">
+          <SlidersHorizontal className="h-4 w-4 text-primary" />
+          Filters
+        </div>
         {hasFilters && (
-          <button
-            onClick={clearAll}
-            className="flex items-center gap-1 text-xs text-orange-500 hover:text-orange-600 font-medium"
-          >
-            <X className="h-3 w-3" /> Clear all
-          </button>
+          <Button variant="ghost" size="sm" onClick={clearAll} className="h-7 px-2 text-xs text-primary">
+            <X className="h-3 w-3 mr-1" /> Clear
+          </Button>
         )}
       </div>
 
-      {/* Sort */}
+      <Separator />
+
+      {/* Sort by */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2">Sort by</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Sort by</p>
         <div className="space-y-1">
-          {(['rating', 'delivery_time', 'price'] as const).map((opt) => (
-            <button
-              key={opt}
-              onClick={() => { setSortBy(opt); notify({ sortBy: opt }) }}
-              className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${
-                sortBy === opt
-                  ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 font-medium'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
-              }`}
-            >
-              {opt === 'rating' ? '⭐ Rating' : opt === 'delivery_time' ? '🕐 Delivery time' : '💰 Price'}
+          {SORT_OPTIONS.map((o) => (
+            <button key={o.value} onClick={() => { setSortBy(o.value); notify({ sortBy: o.value }) }}
+              className={cn(
+                'w-full text-left text-sm px-3 py-2 rounded-lg transition-colors',
+                sortBy === o.value
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-muted-foreground hover:bg-muted'
+              )}>
+              {o.label}
             </button>
           ))}
         </div>
       </div>
 
+      <Separator />
+
       {/* Quick filters */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2">Quick filters</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Quick filters</p>
         <div className="space-y-2">
-          {[
-            { label: 'Deals & offers', icon: Tag, state: deals, set: (v: boolean) => { setDeals(v); notify({ deals: v }) } },
-            { label: 'Free delivery', icon: Truck, state: freeDelivery, set: (v: boolean) => { setFreeDelivery(v); notify({ freeDelivery: v }) } },
-            { label: 'Top rated (4.5+)', icon: Star, state: pickup, set: (v: boolean) => { setPickup(v); notify({ pickup: v }) } },
-          ].map((f) => (
-            <label
-              key={f.label}
-              className="flex items-center gap-2.5 cursor-pointer group"
-            >
-              <input
-                type="checkbox"
-                checked={f.state}
-                onChange={(e) => f.set(e.target.checked)}
-                className="rounded border-slate-300 text-orange-500 focus:ring-orange-400"
-              />
-              <f.icon className="h-3.5 w-3.5 text-slate-400 group-hover:text-orange-500 transition-colors" />
-              <span className="text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors">
-                {f.label}
-              </span>
+          {([
+            { label: 'Deals & offers',  icon: Tag,   state: deals,       set: (v: boolean) => { setDeals(v);       notify({ deals: v }) } },
+            { label: 'Free delivery',   icon: Truck, state: freeDelivery, set: (v: boolean) => { setFreeDelivery(v); notify({ freeDelivery: v }) } },
+            { label: 'Top rated 4.5+', icon: Star,  state: topRated,    set: (v: boolean) => { setTopRated(v);    notify({ topRated: v }) } },
+          ] as const).map((f) => (
+            <label key={f.label} className="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" checked={f.state} onChange={(e) => f.set(e.target.checked)}
+                className="rounded border-border accent-primary" />
+              <f.icon className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+              <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{f.label}</span>
             </label>
           ))}
         </div>
       </div>
 
-      {/* Cuisines */}
+      <Separator />
+
+      {/* Cuisine chips */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2">Cuisine</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Cuisine</p>
         <div className="flex flex-wrap gap-1.5">
-          {cuisineOptions.map((c) => (
-            <button
-              key={c}
-              onClick={() => toggleCuisine(c)}
-              className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-                selectedCuisines.includes(c)
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
-            >
-              {c}
+          {CUISINE_OPTIONS.map((c) => (
+            <button key={c} onClick={() => toggle(c)}>
+              <Badge variant={cuisines.includes(c) ? 'default' : 'muted'} className="cursor-pointer hover:opacity-80 transition-opacity text-xs">
+                {c}
+              </Badge>
             </button>
           ))}
         </div>
       </div>
 
+      <Separator />
+
       {/* Price range */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
           Max delivery fee
         </p>
-        <input
-          type="range"
-          min={0}
-          max={3}
-          value={priceRange}
-          onChange={(e) => { setPriceRange(Number(e.target.value)); notify({ priceRange: Number(e.target.value) }) }}
-          className="w-full accent-orange-500"
-        />
-        <p className="text-xs text-center text-slate-500 mt-1">
+        <input type="range" min={0} max={3} value={priceRange}
+          onChange={(e) => { const v = Number(e.target.value); setPriceRange(v); notify({ priceRange: v }) }}
+          className="w-full accent-primary" />
+        <p className="text-xs text-center text-muted-foreground mt-1">
           {priceRange === 0 ? 'Any' : '$'.repeat(priceRange)}
         </p>
       </div>
     </motion.aside>
   )
 }
-

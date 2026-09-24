@@ -1,96 +1,37 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
-import Header from './Header'
-import Footer from './Footer'
-import ErrorBoundary from './ErrorBoundary'
-import { ToastContainer } from './ui/Toast'
-import { Modal } from './ui/Modal'
-import { SkipLink } from './ui/SkipLink'
-import SEO from './SEO'
-import { useTheme, cn } from '../utils/theme'
 import { useReducedMotion } from '../hooks/useReducedMotion'
+import ErrorBoundary from './ErrorBoundary'
 
-export default function Layout({ 
-  children,
-  title,
-  description,
-  path,
-}: { 
-  children: React.ReactNode 
-  title?: string
-  description?: string
-  path?: string
-}) {
-  const { resolvedTheme } = useTheme();
-  const prefersReducedMotion = useReducedMotion();
-  
-  // Adjust animations based on reduced motion preference
-  const transitions = prefersReducedMotion
-    ? {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-        transition: { duration: 0.2 }
-      }
-    : {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-        transition: { duration: 0.3 }
-      };
+/**
+ * Shell layout for Pages Router pages.
+ * It is thin on purpose — theme, toast, and providers are handled
+ * in _app.tsx so Layout has a single responsibility: page frame. ✓ SRP.
+ */
+export default function Layout({ children }: { children: React.ReactNode }) {
+  const prefersReducedMotion = useReducedMotion()
 
-  const mainTransitions = prefersReducedMotion
-    ? {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        transition: { duration: 0.2 }
-      }
-    : {
-        initial: { opacity: 0, y: 20 },
-        animate: { opacity: 1, y: 0 },
-        transition: { delay: 0.2, duration: 0.4 }
-      };
-  
+  return (
+    <a href="#main-content" className="skip-link">
+      Skip to content
+    </a>
+  )
+}
+
+/**
+ * Minimal page wrapper without the top navigation (used by pages that
+ * supply their own navbar, e.g. the home page).
+ */
+export function PageShell({ children }: { children: React.ReactNode }) {
   return (
     <>
-      {/* SEO */}
-      {title && <SEO title={title} description={description} path={path} />}
-      
-      {/* Global components */}
-      <ToastContainer />
-      <Modal />
-      
-      {/* Accessibility skip link */}
-      <SkipLink targetId="main-content" />
-      
-      <AnimatePresence mode="wait">
-        <motion.div 
-          key={resolvedTheme}
-          {...transitions}
-          className={cn(
-            "min-h-screen flex flex-col transition-colors duration-200",
-            "text-black dark:text-white",
-            "bg-background-light dark:bg-background-dark"
-          )}
-        >
-          <Header />
-          <motion.main 
-            id="main-content" /* Target for skip link */
-            tabIndex={-1} /* Makes the element focusable */
-            {...mainTransitions}
-            className={cn(
-              "flex-1 container mx-auto px-4 py-8 outline-none",
-              "transition-colors duration-200"
-            )}
-          >
-            <ErrorBoundary>
-              {children}
-            </ErrorBoundary>
-          </motion.main>
-          <Footer />
-        </motion.div>
-      </AnimatePresence>
+      <a href="#main-content" className="skip-link">Skip to content</a>
+      <ErrorBoundary>
+        <main id="main-content" tabIndex={-1} className="outline-none min-h-screen">
+          {children}
+        </main>
+      </ErrorBoundary>
     </>
   )
 }
+
