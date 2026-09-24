@@ -1,6 +1,6 @@
-import { create } from 'zustand'
+﻿import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { toast } from '../components/ui/Toast'
+import { notify as toast } from '@/lib/notify'
 import { analytics, EventTypes } from '../utils/analytics'
 import { withAsyncActions, AsyncActionState, AsyncActionsApi } from './middleware'
 
@@ -618,3 +618,4 @@ export const userActions: UserActions = {
     }
   }
 }
+

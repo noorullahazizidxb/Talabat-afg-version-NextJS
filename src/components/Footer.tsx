@@ -1,205 +1,98 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, Heart } from 'lucide-react'
-import { cn } from '../utils/theme'
+import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin, Heart, ArrowUpRight } from 'lucide-react'
+import { Separator } from '@/components/ui/separator'
 
-const footerLinks = [
-  {
-    title: 'Company',
-    links: [
-      { label: 'About Us', href: '/about' },
-      { label: 'Careers', href: '/careers' },
-      { label: 'Blog', href: '/blog' },
-      { label: 'Press', href: '/press' },
-    ],
-  },
-  {
-    title: 'Support',
-    links: [
-      { label: 'Help Center', href: '/help' },
-      { label: 'Safety Center', href: '/safety' },
-      { label: 'Community Guidelines', href: '/guidelines' },
-    ],
-  },
-  {
-    title: 'Legal',
-    links: [
-      { label: 'Terms of Service', href: '/terms' },
-      { label: 'Privacy Policy', href: '/privacy' },
-      { label: 'Cookie Policy', href: '/cookies' },
-    ],
-  },
-  {
-    title: 'Install App',
-    links: [
-      { label: 'iOS App', href: '/ios' },
-      { label: 'Android App', href: '/android' },
-      { label: 'Huawei App', href: '/huawei' },
-    ],
-  },
+const FOOTER_LINKS = [
+  { title: 'Company', links: [{ label: 'About Us', href: '/about' }, { label: 'Careers', href: '/careers' }, { label: 'Blog', href: '/blog' }, { label: 'Press', href: '/press' }] },
+  { title: 'Support',  links: [{ label: 'Help Center', href: '/help' }, { label: 'Safety', href: '/safety' }, { label: 'Guidelines', href: '/guidelines' }] },
+  { title: 'Legal',    links: [{ label: 'Terms', href: '/terms' }, { label: 'Privacy', href: '/privacy' }, { label: 'Cookies', href: '/cookies' }] },
+  { title: 'App',      links: [{ label: 'iOS', href: '/ios' }, { label: 'Android', href: '/android' }, { label: 'Huawei', href: '/huawei' }] },
 ]
 
-const socialLinks = [
-  { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
-  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
+const SOCIAL = [
+  { icon: Facebook,  href: 'https://facebook.com',  label: 'Facebook' },
+  { icon: Twitter,   href: 'https://twitter.com',   label: 'Twitter' },
   { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-  { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
+  { icon: Linkedin,  href: 'https://linkedin.com',  label: 'LinkedIn' },
 ]
 
-const contactInfo = [
-  { icon: Mail, content: 'support@talabat.com' },
-  { icon: Phone, content: '+971 800 TALABAT (825 2228)' },
-  { icon: MapPin, content: 'Dubai, United Arab Emirates' },
+const CONTACT = [
+  { icon: Mail,   content: 'support@talabat.com' },
+  { icon: Phone,  content: '+93 (0) 70 000 0000' },
+  { icon: MapPin, content: 'Kabul, Afghanistan' },
 ]
 
 export default function Footer() {
   return (
-    <footer className={cn(
-      "pt-12 pb-8 transition-colors duration-200",
-      "bg-surface-light dark:bg-surface-dark",
-      "border-t border-gray-200 dark:border-gray-800"
-    )}>
-      <div className="container mx-auto px-4">
-        {/* Main footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
-          {/* Brand column */}
+    <footer className="bg-card border-t border-border text-card-foreground">
+      <div className="container mx-auto px-4 pt-14 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 mb-12">
+
+          {/* Brand */}
           <div className="lg:col-span-2">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="space-y-4"
-            >
-              <Link href="/">
-                <div className={cn(
-                  "text-2xl font-bold flex items-center gap-2 transition-colors duration-200",
-                  "text-accent-600 dark:text-accent-400"
-                )}>
-                  talabat
-                </div>
+            <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} viewport={{ once: true }} className="space-y-5">
+              <Link href="/" className="text-2xl font-extrabold tracking-tight text-foreground">
+                talabat<span className="text-primary">.</span>
               </Link>
-              <p className={cn(
-                "max-w-md transition-colors duration-200",
-                "text-gray-600 dark:text-gray-400"
-              )}>
-                Your favorite food, groceries, flowers and more, delivered fast to your door.
+              <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+                Your favourite food, groceries, flowers and more — delivered fast across Afghanistan.
               </p>
-              
-              {/* Contact info */}
-              <div className="space-y-2 mt-6">
-                {contactInfo.map((item, i) => {
-                  const Icon = item.icon
-                  return (
-                    <motion.div 
-                      key={i}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1, duration: 0.5 }}
-                      viewport={{ once: true }}
-                      className={cn(
-                        "flex items-center gap-3 transition-colors duration-200",
-                        "text-gray-600 dark:text-gray-400"
-                      )}
-                    >
-                      <Icon className="h-4 w-4 text-accent-500" />
-                      <span>{item.content}</span>
-                    </motion.div>
-                  )
-                })}
-              </div>
-              
-              {/* Social links */}
-              <div className="flex gap-4 mt-6">
-                {socialLinks.map((social, i) => {
-                  const Icon = social.icon
-                  return (
-                    <motion.a
-                      key={i}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: i * 0.1, duration: 0.3 }}
-                      viewport={{ once: true }}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      className={cn(
-                        "p-2 rounded-full",
-                        "bg-gray-100 dark:bg-gray-800",
-                        "text-gray-700 dark:text-gray-300",
-                        "hover:bg-accent-100 dark:hover:bg-accent-900",
-                        "hover:text-accent-600 dark:hover:text-accent-400",
-                        "transition-colors duration-200"
-                      )}
-                      aria-label={social.label}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </motion.a>
-                  )
-                })}
+              <ul className="space-y-2">
+                {CONTACT.map((c) => (
+                  <li key={c.content} className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                    <c.icon className="h-4 w-4 text-primary shrink-0" />
+                    {c.content}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex gap-2">
+                {SOCIAL.map(({ icon: Icon, href, label }) => (
+                  <motion.a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                    whileHover={{ scale: 1.1, y: -2 }} whileTap={{ scale: 0.92 }}
+                    aria-label={label}
+                    className="p-2 rounded-lg bg-muted hover:bg-primary hover:text-primary-foreground text-muted-foreground transition-colors">
+                    <Icon className="h-4 w-4" />
+                  </motion.a>
+                ))}
               </div>
             </motion.div>
           </div>
-          
-          {/* Links columns */}
-          {footerLinks.map((section, i) => (
-            <motion.div 
-              key={section.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              viewport={{ once: true }}
-            >
-              <h3 className={cn(
-                "font-semibold mb-4 transition-colors duration-200",
-                "text-gray-900 dark:text-gray-100"
-              )}>{section.title}</h3>
-              <ul className="space-y-2">
-                {section.links.map((link, j) => (
-                  <motion.li 
-                    key={link.label}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: (i * 0.1) + (j * 0.05), duration: 0.3 }}
-                    viewport={{ once: true }}
-                  >
-                    <Link 
-                      href={link.href}
-                      className={cn(
-                        "transition-colors duration-200",
-                        "text-gray-600 dark:text-gray-400",
-                        "hover:text-accent-600 dark:hover:text-accent-400"
-                      )}
-                    >
-                      {link.label}
+
+          {/* Link columns */}
+          {FOOTER_LINKS.map((section, i) => (
+            <motion.div key={section.title} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }} viewport={{ once: true }}>
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
+                {section.title}
+              </h4>
+              <ul className="space-y-2.5">
+                {section.links.map((l) => (
+                  <li key={l.label}>
+                    <Link href={l.href}
+                      className="group flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+                      {l.label}
+                      <ArrowUpRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
             </motion.div>
           ))}
         </div>
-        
-        {/* Footer bottom */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-          viewport={{ once: true }}
-          className={cn(
-            "pt-8 mt-8 text-center text-sm transition-colors duration-200",
-            "border-t border-gray-200 dark:border-gray-800",
-            "text-gray-600 dark:text-gray-400"
-          )}
-        >
-          <p className="flex items-center justify-center gap-1">
-            ©2025 talabat.com – Built with <Heart className="h-4 w-4 text-red-500 animate-pulse" fill="currentColor" /> in the UAE
+
+        <Separator />
+
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 text-xs text-muted-foreground">
+          <p className="flex items-center gap-1">
+            © 2025 talabat.com — built with <Heart className="h-3.5 w-3.5 text-destructive" fill="currentColor" /> for Afghanistan
           </p>
-        </motion.div>
+          <a href="https://note-app.devminds.net" className="text-primary hover:underline">
+            note-app.devminds.net
+          </a>
+        </div>
       </div>
     </footer>
   )
