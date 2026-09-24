@@ -1,7 +1,7 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "buildCommand": "npx prisma generate && next build",
+  "buildCommand": "next build",
   "installCommand": "npm install",
   "regions": ["iad1"],
   "alias": ["note-app.devminds.net"],

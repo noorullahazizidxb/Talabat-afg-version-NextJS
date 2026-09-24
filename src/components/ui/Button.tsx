@@ -14,17 +14,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:     "bg-primary text-primary-foreground hover:bg-primary/90",
+        default:     "bg-primary bg-primary-600 text-primary-foreground text-white hover:bg-primary/90 hover:bg-primary-700",
+        primary:     "bg-primary bg-primary-600 text-primary-foreground text-white hover:bg-primary/90 hover:bg-primary-700",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:     "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:   "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost:       "hover:bg-accent hover:text-accent-foreground",
-        link:        "text-primary underline-offset-4 hover:underline",
+        outline:     "border border-input border-gray-300 bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:   "bg-secondary bg-secondary-600 text-secondary-foreground text-white hover:bg-secondary/80 hover:bg-secondary-700",
+        accent:      "bg-accent bg-accent-500 text-accent-foreground text-white hover:bg-accent/80 hover:bg-accent-600",
+        ghost:       "bg-transparent hover:bg-accent hover:text-accent-foreground",
+        link:        "text-primary text-primary-600 underline-offset-4 hover:underline",
         success:     "bg-success text-success-foreground hover:bg-success/90",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm:      "h-8 rounded-md px-3 text-xs",
+        sm:      "h-8 rounded-md px-3 py-1.5 text-sm",
+        md:      "h-10 px-4 py-2 text-base",
         lg:      "h-11 rounded-md px-8",
         icon:    "h-10 w-10",
         pill:    "h-10 px-5 rounded-full",
@@ -38,15 +41,33 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  fullWidth?: boolean
   isLoading?: boolean
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoading, disabled, children, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      fullWidth = false,
+      isLoading,
+      disabled,
+      leftIcon,
+      rightIcon,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(buttonVariants({ variant, size }), fullWidth && "w-full", className)}
         ref={ref}
         disabled={disabled || isLoading}
         aria-busy={isLoading}
@@ -54,13 +75,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading ? (
           <>
-            <svg className="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
+            <span role="status" aria-live="polite">
+              <svg className="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            </span>
             {children}
           </>
-        ) : children}
+        ) : (
+          <>
+            {leftIcon}
+            {children}
+            {rightIcon}
+          </>
+        )}
       </Comp>
     )
   }

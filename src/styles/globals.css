@@ -123,7 +123,7 @@
   --radius-full: 9999px;
 
   /* Typography */
-  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inter, Inter), system-ui, -apple-system, sans-serif;
 }
 
 /* ── Base reset ─────────────────────────────────────────────── */

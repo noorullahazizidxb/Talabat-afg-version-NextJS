@@ -143,7 +143,7 @@ export default function HomePage() {
                   <h3 className="font-bold text-lg text-card-foreground mb-1">{cat.title}</h3>
                   <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{cat.desc}</p>
                   <Link href={cat.href}>
-                    <Button size="sm" size="pill"
+                    <Button size="pill"
                       className={cn('bg-gradient-to-r text-white hover:opacity-90 hover:shadow-md border-0', cat.from, cat.to)}>
                       {cat.btn}
                       <ArrowRight className="h-4 w-4" />
