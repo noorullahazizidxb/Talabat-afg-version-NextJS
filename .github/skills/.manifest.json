@@ -1,0 +1,116 @@
+{
+  "skills": {
+    "plan": {
+      "name": "plan",
+      "version": "1.0.0",
+      "source": "bundled",
+      "contentHash": "f239af7e0d2318386dc84739c19313ec40d30e9b34c57e3a257c163ff19445fb",
+      "files": [
+        "SKILL.md"
+      ],
+      "installedAt": "2026-10-10T06:02:23.632Z"
+    },
+    "research": {
+      "name": "research",
+      "version": "1.0.0",
+      "source": "bundled",
+      "contentHash": "4362dbe6281b495873403fde83a7fd02c03127ef3c095ad783d41991686365d6",
+      "files": [
+        "SKILL.md"
+      ],
+      "installedAt": "2026-10-10T06:02:23.632Z"
+    },
+    "skill-creator": {
+      "name": "skill-creator",
+      "version": "98a510d1cfef9f82c3b1eec200229ca68725e613",
+      "source": "anthropics/skills@main:skills/skill-creator",
+      "contentHash": "ad480cdd4a4b5886cb7d35c2055d4b9005babe15d80ace54d90f4259f3bf3257",
+      "files": [
+        "LICENSE.txt",
+        "SKILL.md",
+        "agents/analyzer.md",
+        "agents/comparator.md",
+        "agents/grader.md",
+        "assets/eval_review.html",
+        "eval-viewer/generate_review.py",
+        "eval-viewer/viewer.html",
+        "references/schemas.md",
+        "scripts/__init__.py",
+        "scripts/aggregate_benchmark.py",
+        "scripts/generate_report.py",
+        "scripts/improve_description.py",
+        "scripts/package_skill.py",
+        "scripts/quick_validate.py",
+        "scripts/run_eval.py",
+        "scripts/run_loop.py",
+        "scripts/utils.py"
+      ],
+      "installedAt": "2026-10-10T06:02:23.632Z"
+    },
+    "agent-browser": {
+      "name": "agent-browser",
+      "version": "121eecacd86c0aab06aef5cd4663e80c5397cd41",
+      "source": "vercel-labs/agent-browser@main:skills/agent-browser",
+      "contentHash": "6f68d01b14796e410746fab39c2d6b36dcfa030dd59eb772f6418e2db949a16c",
+      "files": [
+        "SKILL.md"
+      ],
+      "installedAt": "2026-10-10T06:02:23.632Z"
+    },
+    "init": {
+      "name": "init",
+      "version": "f311e092af9f1dadb39d6e3b285e613489cd9827",
+      "source": "zencoderai/skills@main:init",
+      "contentHash": "5aeee8c4b8e09f47464facc73f911cf5d018a21e8bb6444d46facebece96cbf9",
+      "files": [
+        "SKILL.md"
+      ],
+      "installedAt": "2026-10-10T06:02:23.632Z"
+    },
+    "cross-review": {
+      "name": "cross-review",
+      "version": "1.2.1",
+      "source": "zencoderai/skills@main:cross-review",
+      "contentHash": "8cbaeb16c427c85586ba6d1b5706e38a58e4b93ca45dab2055668afff2030794",
+      "files": [
+        "SKILL.md"
+      ],
+      "installedAt": "2026-10-10T06:02:23.632Z"
+    },
+    "zen-comprehensive-review": {
+      "name": "zen-comprehensive-review",
+      "version": "1.2.2",
+      "source": "bundled",
+      "contentHash": "dea278704faf0537cab2d9b8797a64a324f3d9591d7377dc049202b668e3a78d",
+      "files": [
+        "SKILL.md",
+        "scripts/post_review_strict.js"
+      ],
+      "installedAt": "2026-10-10T06:02:23.632Z"
+    },
+    "zen-review": {
+      "name": "zen-review",
+      "version": "1.1.0",
+      "source": "bundled",
+      "contentHash": "902276b489e896f7630caeba25ef86f44691286e2ccea23fae63030534d72805",
+      "files": [
+        "SKILL.md"
+      ],
+      "installedAt": "2026-10-10T06:02:23.632Z"
+    },
+    "frontend-design": {
+      "name": "frontend-design",
+      "version": "6bb927d9b72cca7b9eebb776230a788f4a666217",
+      "source": "zencoderai/skills@main:frontend-design",
+      "contentHash": "be3e33151b98c8df2908a4f8fedd27e9ce0533eec6bd592765fa9a3e2a4f60ed",
+      "files": [
+        "SKILL.md",
+        "evaluation.md",
+        "implementation.md"
+      ],
+      "installedAt": "2026-10-10T06:02:23.632Z"
+    }
+  },
+  "bundledManifestHash": "0419aeeeb68e36f53f8f5166dea4343d95ef570fd63b583e1ebe40ac8531f356",
+  "platform": "desktop"
+}

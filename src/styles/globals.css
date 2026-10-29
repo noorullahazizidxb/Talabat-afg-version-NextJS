@@ -1,35 +1,102 @@
 /* Global Styles */
 /* styles/globals.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 html {
   scroll-behavior: smooth;
 }
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --theme-background: #f7f9fd;
+  --theme-surface: #ffffff;
+  --theme-surface-elevated: #fff6ec;
+  --theme-text: #090b12;
+  --theme-text-muted: #5b6679;
+  --theme-border: #dfe5ef;
+  --theme-primary: #ff8a1f;
+  --theme-secondary: #4a546f;
+  --theme-accent: #ffbe0b;
+  --theme-success: #00a77b;
+  --theme-warning: #ff9b3d;
+  --theme-danger: #ea5656;
+  --theme-ring: #ff8a1f;
+  --theme-brand-start: #ffbe0b;
+  --theme-brand-end: #ff6a00;
+}
+
+/* Dark mode variable overrides — applied by ThemeTokensProvider & bootstrap script */
+.dark,
+[data-theme-mode="dark"] {
+  --theme-background: #0f1117;
+  --theme-surface: #181c25;
+  --theme-surface-elevated: #1d2430;
+  --theme-text: #edf0f8;
+  --theme-text-muted: #a0abc0;
+  --theme-border: #2d3648;
+  --theme-primary: #ff9a3c;
+  --theme-secondary: #8294b4;
+  --theme-accent: #ffd43b;
+  --theme-success: #34d399;
+  --theme-warning: #fbbf24;
+  --theme-danger: #f87171;
+  --theme-ring: #ff9a3c;
+  --theme-brand-start: #ffbe0b;
+  --theme-brand-end: #ff6a00;
 }
 
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: "Yekan", "Inter", "Segoe UI", sans-serif;
+  --font-display: "Fraunces", "Yekan", Georgia, serif;
+  --font-mono: "Cascadia Mono", "Fira Code", monospace;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background-light: var(--theme-background);
+  --color-background-dark: var(--theme-background);
+  --color-surface-light: var(--theme-surface);
+  --color-surface-dark: var(--theme-surface);
+  --color-surface-elevated: var(--theme-surface-elevated);
+
+  --color-app-text: var(--theme-text);
+  --color-app-muted: var(--theme-text-muted);
+  --color-app-border: var(--theme-border);
+  --color-app-ring: var(--theme-ring);
+  --color-app-brand-start: var(--theme-brand-start);
+  --color-app-brand-end: var(--theme-brand-end);
+
+  --color-primary-50: color-mix(in oklab, var(--theme-primary) 10%, white);
+  --color-primary-100: color-mix(in oklab, var(--theme-primary) 18%, white);
+  --color-primary-300: color-mix(in oklab, var(--theme-primary) 45%, white);
+  --color-primary-400: color-mix(in oklab, var(--theme-primary) 62%, white);
+  --color-primary-500: color-mix(in oklab, var(--theme-primary) 78%, white);
+  --color-primary-600: var(--theme-primary);
+  --color-primary-700: color-mix(in oklab, var(--theme-primary) 82%, black);
+  --color-primary-900: color-mix(in oklab, var(--theme-primary) 62%, black);
+
+  --color-secondary-600: var(--theme-secondary);
+  --color-secondary-700: color-mix(in oklab, var(--theme-secondary) 80%, black);
+
+  --color-accent-50: color-mix(in oklab, var(--theme-accent) 10%, white);
+  --color-accent-100: color-mix(in oklab, var(--theme-accent) 18%, white);
+  --color-accent-300: color-mix(in oklab, var(--theme-accent) 42%, white);
+  --color-accent-400: color-mix(in oklab, var(--theme-accent) 58%, white);
+  --color-accent-500: var(--theme-accent);
+  --color-accent-600: color-mix(in oklab, var(--theme-accent) 82%, black);
+  --color-accent-800: color-mix(in oklab, var(--theme-accent) 60%, black);
+  --color-accent-900: color-mix(in oklab, var(--theme-accent) 42%, black);
+
+  --color-success-500: var(--theme-success);
+  --color-warning-500: var(--theme-warning);
+  --color-danger-500: var(--theme-danger);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--theme-background);
+  color: var(--theme-text);
+  font-family: var(--font-sans);
+}
+
+* {
+  border-color: var(--theme-border);
 }
 
 

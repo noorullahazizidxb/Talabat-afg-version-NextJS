@@ -2,9 +2,14 @@
 import '../patches/router-patch';
 import type { AppProps } from 'next/app';
 import '../styles/globals.css';
+import { ThemeTokensProvider } from '@/theme/ThemeTokensProvider';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <ThemeTokensProvider>
+      <Component {...pageProps} />
+    </ThemeTokensProvider>
+  );
 }
 
 export default MyApp;
