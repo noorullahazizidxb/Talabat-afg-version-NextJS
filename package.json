@@ -6,7 +6,6 @@
     "dev": "cross-env NEXT_TELEMETRY_DISABLED=1 NEXT_TRACE_EXECS=0 NODE_OPTIONS=--max-old-space-size=4096 next dev --port 3456",
     "build": "cross-env NEXT_TELEMETRY_DISABLED=1 NEXT_TRACE_EXECS=0 next build",
     "start": "next start",
-    "serve": "npx -s serve .next-temp",
     "lint": "next lint",
     "test": "jest",
     "test:coverage": "jest --coverage"
