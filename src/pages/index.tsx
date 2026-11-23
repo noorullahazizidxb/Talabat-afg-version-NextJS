@@ -91,7 +91,7 @@ export default function Home() {
 
       {/* Hero section */}
       <div className={cn(
-        "text-white py-12 transition-colors duration-200",
+        "text-white py-14 md:py-20 transition-colors duration-200",
         isDark ? "bg-orange-900" : "bg-orange-500"
       )}>
         <div className="container mx-auto px-4">
@@ -115,7 +115,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-3xl md:text-4xl font-bold text-white mb-4"
+              className="text-4xl md:text-5xl font-bold tracking-tight text-balance text-white mb-4"
             >
               Welcome to talabat
             </motion.h1>
@@ -124,7 +124,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-xl text-white mb-8"
+              className="text-lg md:text-xl text-white/90 mb-8 text-pretty"
             >
               Fast delivery of food, groceries and more
             </motion.p>
@@ -133,7 +133,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="w-full max-w-md"
+              className="w-full max-w-xl"
             >
               <LocationSearch />
             </motion.div>
@@ -143,7 +143,7 @@ export default function Home() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
               onClick={() => setAuthOpen(true)} 
-              className="mt-6 text-white font-medium hover:bg-orange-600 px-4 py-1.5 rounded-[30px] border border-white transition-colors flex items-center gap-2"
+              className="mt-6 inline-flex h-11 items-center gap-2 rounded-full border border-white/80 px-5 font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               <UserPlus className="h-4 w-4" />
               Login or Signup
