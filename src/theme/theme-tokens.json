@@ -1,0 +1,428 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-27T00:00:00.000Z",
+  "activePresetId": "devminds-nocturne",
+  "mode": "system",
+  "presets": [
+    {
+      "id": "devminds-nocturne",
+      "name": "DevMinds Nocturne",
+      "description": "Dark teal confidence inspired by devminds.net production pages.",
+      "inspiredBy": "devminds.net",
+      "modes": {
+        "light": {
+          "background": "#f4f6f7",
+          "surface": "#ffffff",
+          "surfaceElevated": "#fdfefe",
+          "text": "#11181c",
+          "textMuted": "#60727d",
+          "border": "#d4e0e4",
+          "primary": "#1ea6a7",
+          "secondary": "#49687a",
+          "accent": "#f0a857",
+          "success": "#229f88",
+          "warning": "#e3a04b",
+          "danger": "#d96666",
+          "ring": "#1ea6a7",
+          "brandStart": "#2ac7c3",
+          "brandEnd": "#0f8f96"
+        },
+        "dark": {
+          "background": "#0a0f0f",
+          "surface": "#121a1b",
+          "surfaceElevated": "#172225",
+          "text": "#edf4f4",
+          "textMuted": "#98abad",
+          "border": "#2c3f42",
+          "primary": "#43c6c0",
+          "secondary": "#7da1b5",
+          "accent": "#f0a857",
+          "success": "#58d7b7",
+          "warning": "#f1b36a",
+          "danger": "#ff7f7f",
+          "ring": "#43c6c0",
+          "brandStart": "#47dad2",
+          "brandEnd": "#0fa1a6"
+        }
+      }
+    },
+    {
+      "id": "devminds-ember",
+      "name": "DevMinds Ember",
+      "description": "High-contrast orange studio palette inspired by ourworks.devminds.net.",
+      "inspiredBy": "ourworks.devminds.net",
+      "modes": {
+        "light": {
+          "background": "#f7f9fd",
+          "surface": "#ffffff",
+          "surfaceElevated": "#fff6ec",
+          "text": "#090b12",
+          "textMuted": "#5b6679",
+          "border": "#dfe5ef",
+          "primary": "#ff8a1f",
+          "secondary": "#4a546f",
+          "accent": "#ffbe0b",
+          "success": "#00a77b",
+          "warning": "#ff9b3d",
+          "danger": "#ea5656",
+          "ring": "#ff8a1f",
+          "brandStart": "#ffbe0b",
+          "brandEnd": "#ff6a00"
+        },
+        "dark": {
+          "background": "#090b12",
+          "surface": "#10141f",
+          "surfaceElevated": "#171d2b",
+          "text": "#f2f4f8",
+          "textMuted": "#9ca6ba",
+          "border": "#263045",
+          "primary": "#ff8a1f",
+          "secondary": "#8b98b6",
+          "accent": "#ffbe0b",
+          "success": "#11c894",
+          "warning": "#ffb454",
+          "danger": "#ff6f6f",
+          "ring": "#ff8a1f",
+          "brandStart": "#ffbe0b",
+          "brandEnd": "#ff6a00"
+        }
+      }
+    },
+    {
+      "id": "atlas-royal",
+      "name": "Atlas Royal",
+      "description": "Executive cobalt palette for enterprise ordering.",
+      "inspiredBy": "talabat-afg custom",
+      "modes": {
+        "light": {
+          "background": "#f5f7fb",
+          "surface": "#ffffff",
+          "surfaceElevated": "#f2f6ff",
+          "text": "#11162a",
+          "textMuted": "#5d6783",
+          "border": "#d8e0f2",
+          "primary": "#2f66d9",
+          "secondary": "#5f45b8",
+          "accent": "#4c9eff",
+          "success": "#10a879",
+          "warning": "#d9972c",
+          "danger": "#db4d57",
+          "ring": "#2f66d9",
+          "brandStart": "#2f66d9",
+          "brandEnd": "#5f45b8"
+        },
+        "dark": {
+          "background": "#0f1528",
+          "surface": "#151d35",
+          "surfaceElevated": "#1a2543",
+          "text": "#edf1ff",
+          "textMuted": "#a4b0d0",
+          "border": "#2a365a",
+          "primary": "#4f87ff",
+          "secondary": "#8a6cff",
+          "accent": "#5eb3ff",
+          "success": "#24c58f",
+          "warning": "#e3aa42",
+          "danger": "#f46d75",
+          "ring": "#4f87ff",
+          "brandStart": "#4f87ff",
+          "brandEnd": "#8a6cff"
+        }
+      }
+    },
+    {
+      "id": "aurora-neon",
+      "name": "Aurora Neon",
+      "description": "Vibrant but controlled retail-tech gradient stack.",
+      "inspiredBy": "talabat-afg custom",
+      "modes": {
+        "light": {
+          "background": "#f9f8ff",
+          "surface": "#ffffff",
+          "surfaceElevated": "#f7fcff",
+          "text": "#161328",
+          "textMuted": "#6b6491",
+          "border": "#e2dff6",
+          "primary": "#7a3cff",
+          "secondary": "#00a7b8",
+          "accent": "#f46dd8",
+          "success": "#00b88d",
+          "warning": "#efaa2a",
+          "danger": "#e94f8b",
+          "ring": "#7a3cff",
+          "brandStart": "#7a3cff",
+          "brandEnd": "#00c2d1"
+        },
+        "dark": {
+          "background": "#120f1f",
+          "surface": "#19152c",
+          "surfaceElevated": "#231d3b",
+          "text": "#f3efff",
+          "textMuted": "#b6acd9",
+          "border": "#332c50",
+          "primary": "#a67dff",
+          "secondary": "#42d6dd",
+          "accent": "#ff91e3",
+          "success": "#3ad8a9",
+          "warning": "#f4c04f",
+          "danger": "#ff7fb2",
+          "ring": "#a67dff",
+          "brandStart": "#a67dff",
+          "brandEnd": "#42d6dd"
+        }
+      }
+    },
+    {
+      "id": "cashmere-sand",
+      "name": "Cashmere Sand",
+      "description": "Warm premium palette with hospitality tone.",
+      "inspiredBy": "talabat-afg custom",
+      "modes": {
+        "light": {
+          "background": "#fbf8f3",
+          "surface": "#ffffff",
+          "surfaceElevated": "#fffaf1",
+          "text": "#2a2018",
+          "textMuted": "#7a6554",
+          "border": "#ecdfcf",
+          "primary": "#bf7a38",
+          "secondary": "#7e5a3f",
+          "accent": "#d6a35f",
+          "success": "#5f9f68",
+          "warning": "#d9953a",
+          "danger": "#c95d4f",
+          "ring": "#bf7a38",
+          "brandStart": "#bf7a38",
+          "brandEnd": "#e0b472"
+        },
+        "dark": {
+          "background": "#1b1510",
+          "surface": "#251d16",
+          "surfaceElevated": "#30251b",
+          "text": "#f9f1e6",
+          "textMuted": "#c5b19a",
+          "border": "#483728",
+          "primary": "#e0a45f",
+          "secondary": "#b6895f",
+          "accent": "#f2c481",
+          "success": "#87c18b",
+          "warning": "#f0b35d",
+          "danger": "#e78b7d",
+          "ring": "#e0a45f",
+          "brandStart": "#e0a45f",
+          "brandEnd": "#f2c481"
+        }
+      }
+    },
+    {
+      "id": "midnight-cobalt",
+      "name": "Midnight Cobalt",
+      "description": "Deep navy operations console aesthetic.",
+      "inspiredBy": "talabat-afg custom",
+      "modes": {
+        "light": {
+          "background": "#f4f7ff",
+          "surface": "#ffffff",
+          "surfaceElevated": "#edf2ff",
+          "text": "#121a38",
+          "textMuted": "#5f6c98",
+          "border": "#d6dff6",
+          "primary": "#3250d8",
+          "secondary": "#267ca9",
+          "accent": "#6b83ff",
+          "success": "#2d9f7d",
+          "warning": "#d29a36",
+          "danger": "#d34f6c",
+          "ring": "#3250d8",
+          "brandStart": "#3250d8",
+          "brandEnd": "#267ca9"
+        },
+        "dark": {
+          "background": "#0c132b",
+          "surface": "#111b38",
+          "surfaceElevated": "#162349",
+          "text": "#e9efff",
+          "textMuted": "#9aabd8",
+          "border": "#263963",
+          "primary": "#5f7eff",
+          "secondary": "#4bb2da",
+          "accent": "#8ba0ff",
+          "success": "#53caa3",
+          "warning": "#e5b254",
+          "danger": "#ec7892",
+          "ring": "#5f7eff",
+          "brandStart": "#5f7eff",
+          "brandEnd": "#4bb2da"
+        }
+      }
+    },
+    {
+      "id": "olive-atelier",
+      "name": "Olive Atelier",
+      "description": "Editorial green palette with calm contrast.",
+      "inspiredBy": "talabat-afg custom",
+      "modes": {
+        "light": {
+          "background": "#f6f8f2",
+          "surface": "#ffffff",
+          "surfaceElevated": "#f2f7e8",
+          "text": "#1f2b1d",
+          "textMuted": "#66795f",
+          "border": "#d9e6cd",
+          "primary": "#4d8b45",
+          "secondary": "#2f6e66",
+          "accent": "#8ea84e",
+          "success": "#3ca56b",
+          "warning": "#cb9938",
+          "danger": "#c75a52",
+          "ring": "#4d8b45",
+          "brandStart": "#4d8b45",
+          "brandEnd": "#8ea84e"
+        },
+        "dark": {
+          "background": "#121a12",
+          "surface": "#1a251a",
+          "surfaceElevated": "#223024",
+          "text": "#edf5e8",
+          "textMuted": "#a3b59a",
+          "border": "#334633",
+          "primary": "#73b56a",
+          "secondary": "#5fb3a6",
+          "accent": "#b6cc6d",
+          "success": "#63d192",
+          "warning": "#e2b45a",
+          "danger": "#e68982",
+          "ring": "#73b56a",
+          "brandStart": "#73b56a",
+          "brandEnd": "#b6cc6d"
+        }
+      }
+    },
+    {
+      "id": "ocean-slate",
+      "name": "Ocean Slate",
+      "description": "Balanced marine palette for logistics dashboards.",
+      "inspiredBy": "talabat-afg custom",
+      "modes": {
+        "light": {
+          "background": "#f4f9fb",
+          "surface": "#ffffff",
+          "surfaceElevated": "#edf6fa",
+          "text": "#12242b",
+          "textMuted": "#5f7a85",
+          "border": "#d3e4ec",
+          "primary": "#147ca1",
+          "secondary": "#345f7d",
+          "accent": "#26b4a1",
+          "success": "#18a481",
+          "warning": "#d3993b",
+          "danger": "#d55666",
+          "ring": "#147ca1",
+          "brandStart": "#147ca1",
+          "brandEnd": "#26b4a1"
+        },
+        "dark": {
+          "background": "#0d1b23",
+          "surface": "#132630",
+          "surfaceElevated": "#173140",
+          "text": "#e9f7fb",
+          "textMuted": "#9cb8c2",
+          "border": "#295060",
+          "primary": "#3db0d4",
+          "secondary": "#6c92c9",
+          "accent": "#58d7c4",
+          "success": "#3bc39f",
+          "warning": "#e5b35a",
+          "danger": "#ec7c89",
+          "ring": "#3db0d4",
+          "brandStart": "#3db0d4",
+          "brandEnd": "#58d7c4"
+        }
+      }
+    },
+    {
+      "id": "ruby-carbon",
+      "name": "Ruby Carbon",
+      "description": "Bold burgundy contrast with premium charcoal.",
+      "inspiredBy": "talabat-afg custom",
+      "modes": {
+        "light": {
+          "background": "#fbf5f7",
+          "surface": "#ffffff",
+          "surfaceElevated": "#fff0f3",
+          "text": "#2a151b",
+          "textMuted": "#7c5a66",
+          "border": "#efd3dc",
+          "primary": "#b23057",
+          "secondary": "#5d3c5f",
+          "accent": "#dd4f6f",
+          "success": "#2d9d72",
+          "warning": "#d49137",
+          "danger": "#d04343",
+          "ring": "#b23057",
+          "brandStart": "#b23057",
+          "brandEnd": "#dd4f6f"
+        },
+        "dark": {
+          "background": "#190f14",
+          "surface": "#25161e",
+          "surfaceElevated": "#311d28",
+          "text": "#fbeff4",
+          "textMuted": "#c1a0ad",
+          "border": "#4a2c3a",
+          "primary": "#e1668b",
+          "secondary": "#b188bf",
+          "accent": "#ff7fa0",
+          "success": "#59c89b",
+          "warning": "#e7b25a",
+          "danger": "#f07d7d",
+          "ring": "#e1668b",
+          "brandStart": "#e1668b",
+          "brandEnd": "#ff7fa0"
+        }
+      }
+    },
+    {
+      "id": "graphite-gold",
+      "name": "Graphite Gold",
+      "description": "Luxury graphite with restrained gold highlights.",
+      "inspiredBy": "talabat-afg custom",
+      "modes": {
+        "light": {
+          "background": "#f7f7f5",
+          "surface": "#ffffff",
+          "surfaceElevated": "#fbf8ef",
+          "text": "#1e1e1b",
+          "textMuted": "#66665c",
+          "border": "#e2dfd1",
+          "primary": "#9a7a2c",
+          "secondary": "#4a505a",
+          "accent": "#c9a54b",
+          "success": "#4d9a6a",
+          "warning": "#c8912f",
+          "danger": "#c85b54",
+          "ring": "#9a7a2c",
+          "brandStart": "#9a7a2c",
+          "brandEnd": "#c9a54b"
+        },
+        "dark": {
+          "background": "#141412",
+          "surface": "#1d1d1a",
+          "surfaceElevated": "#282824",
+          "text": "#f5f4ee",
+          "textMuted": "#b2af9f",
+          "border": "#3a382f",
+          "primary": "#cfab58",
+          "secondary": "#9199aa",
+          "accent": "#f0c76a",
+          "success": "#78c493",
+          "warning": "#e0ae52",
+          "danger": "#e58b83",
+          "ring": "#cfab58",
+          "brandStart": "#cfab58",
+          "brandEnd": "#f0c76a"
+        }
+      }
+    }
+  ]
+}

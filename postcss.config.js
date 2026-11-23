@@ -1,8 +1,7 @@
-// Standard PostCSS configuration for Tailwind CSS v3
+// Standard PostCSS configuration for Tailwind CSS v4
 module.exports = {
   plugins: {
-    tailwindcss: {},
-    autoprefixer: {}
+    '@tailwindcss/postcss': {}
   }
 }
  

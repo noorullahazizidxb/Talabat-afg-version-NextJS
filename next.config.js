@@ -1,22 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Basic configuration
   reactStrictMode: false,
-  
-  // Configure images to allow external domains
+
   images: {
-    domains: ['images.unsplash.com'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'http', hostname: '**' },
+      { protocol: 'https', hostname: '**' },
+    ],
     unoptimized: true,
   },
-  
-  // Use custom directory to avoid permission issues
+
   distDir: '.next-temp',
-  
-  // Disable source maps in production
   productionBrowserSourceMaps: false,
-  
-  // Enable static HTML export
-  output: 'export',
+
+  // 'output: export' removed — incompatible with API routes (/api/theme-tokens).
+  // Pages without server-side data are automatically statically pre-rendered by Next.js.
 };
 
 module.exports = nextConfig;
