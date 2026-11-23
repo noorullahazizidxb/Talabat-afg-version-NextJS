@@ -11,7 +11,6 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  distDir: '.next-temp',
   productionBrowserSourceMaps: false,
 
   // 'output: export' removed — incompatible with API routes (/api/theme-tokens).
