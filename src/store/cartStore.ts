@@ -188,3 +188,7 @@ export const useCartStore = create<CartState>()(
     }
   )
 )
+
+/** Item count derived from `items` (always current, unlike the snapshot `totalItems` field). */
+export const selectItemCount = (state: CartState) =>
+  state.items.reduce((total, item) => total + item.quantity, 0)

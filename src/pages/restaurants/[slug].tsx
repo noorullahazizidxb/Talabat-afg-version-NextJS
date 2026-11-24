@@ -6,16 +6,17 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Star, Clock, Truck, ChevronRight, MapPin, Plus, Minus,
-  ShoppingCart, Search, Filter, ChevronDown, Tag,
-  Flame, ArrowLeft, Info, ShoppingBag,
+  Star, Clock, Truck, MapPin, Plus, Minus,
+  ShoppingCart, Search, Tag,
+  Flame, ArrowLeft, ShoppingBag,
 } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CartDrawer from '@/components/CartDrawer'
 import { cn } from '@/utils/theme'
 import { api, ApiRestaurant, ApiMenuCategory, ApiMenuItem } from '@/utils/api'
-import { useCartStore } from '@/store/cartStore'
+import { selectItemCount, useCartStore } from '@/store/cartStore'
+import { countSwap, fadeUp, floatUp, press, revealViewport, spring, staggerContainer } from '@/utils/motion'
 import { useRouter } from 'next/router'
 
 // ─── Demo fallback data (shown when API is unavailable) ──────────────────────
@@ -54,8 +55,8 @@ const FALLBACK_MENU: ApiMenuCategory[] = [
 
 function RatingBadge({ rating, count }: { rating: number; count: number }) {
   return (
-    <span className="flex items-center gap-1 text-sm font-semibold text-[var(--theme-text)]">
-      <Star className="h-4 w-4 fill-[var(--theme-accent)] text-[var(--theme-accent)]" />
+    <span className="flex shrink-0 items-center gap-1 text-sm font-semibold text-[var(--theme-text)]">
+      <Star className="h-4 w-4 fill-[var(--theme-accent)] text-[var(--theme-accent)]" aria-hidden="true" />
       {rating.toFixed(1)}
       <span className="font-normal text-[var(--theme-text-muted)]">({count.toLocaleString()})</span>
     </span>
@@ -64,15 +65,17 @@ function RatingBadge({ rating, count }: { rating: number; count: number }) {
 
 function StatPill({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
   return (
-    <span className="flex items-center gap-1.5 rounded-full bg-[var(--theme-surface-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)]">
-      <Icon className="h-3.5 w-3.5 text-[var(--theme-primary)]" />
+    <span className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--theme-surface-elevated)] px-3 py-1.5 text-xs font-medium text-[var(--theme-text)]">
+      <Icon className="h-3.5 w-3.5 text-[var(--theme-primary)]" aria-hidden="true" />
       {label}
     </span>
   )
 }
 
+const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-ring)]'
+
 function MenuItemCard({ item, restaurantId }: { item: ApiMenuItem; restaurantId: string }) {
-  const { addItem, items } = useCartStore()
+  const { addItem, updateItemQuantity, items } = useCartStore()
   const inCart = items.find(i => i.id === item.id)
 
   const handleAdd = () => {
@@ -90,35 +93,36 @@ function MenuItemCard({ item, restaurantId }: { item: ApiMenuItem; restaurantId:
     if (inCart) addItem({ ...inCart, quantity: 1 })
   }
 
+  const handleDecrement = () => {
+    if (inCart) updateItemQuantity(inCart.id, inCart.quantity - 1)
+  }
+
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
+    <motion.li
+      variants={fadeUp}
       className={cn(
-        'flex gap-4 rounded-xl p-4 transition-shadow hover:shadow-md',
-        'bg-[var(--theme-surface)] border border-[var(--theme-border)]',
-        !item.isAvailable && 'opacity-50 pointer-events-none'
+        'flex gap-4 rounded-2xl border p-4 transition-[border-color,box-shadow] duration-200',
+        'border-[var(--theme-border)] bg-[var(--theme-surface)] hover:shadow-md',
+        inCart && 'border-orange-300 dark:border-orange-500/50',
+        !item.isAvailable && 'pointer-events-none opacity-50'
       )}
     >
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          {item.isFeatured && (
-            <span className="flex items-center gap-1 text-[10px] font-bold text-orange-500 uppercase tracking-wide">
-              <Flame className="h-3 w-3" /> Popular
-            </span>
-          )}
-        </div>
-        <h4 className="font-semibold text-sm text-[var(--theme-text)] truncate">{item.name}</h4>
-        {item.description && (
-          <p className="text-xs text-[var(--theme-text-muted)] mt-0.5 line-clamp-2">{item.description}</p>
+      <div className="min-w-0 flex-1">
+        {item.isFeatured && (
+          <span className="mb-1 inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-800 dark:bg-orange-500/15 dark:text-orange-300">
+            <Flame className="h-3 w-3" aria-hidden="true" /> Popular
+          </span>
         )}
-        <div className="flex items-center gap-2 mt-2">
-          <span className="font-bold text-sm text-[var(--theme-primary)]">
+        <h4 className="text-sm font-semibold text-[var(--theme-text)]">{item.name}</h4>
+        {item.description && (
+          <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-[var(--theme-text-muted)]">{item.description}</p>
+        )}
+        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="text-sm font-bold tabular-nums text-orange-700 dark:text-orange-300">
             AED {(item.discountPrice ?? item.price).toFixed(2)}
           </span>
           {item.discountPrice && (
-            <span className="text-xs line-through text-[var(--theme-text-muted)]">
+            <span className="text-xs tabular-nums text-[var(--theme-text-muted)] line-through">
               AED {item.price.toFixed(2)}
             </span>
           )}
@@ -128,23 +132,56 @@ function MenuItemCard({ item, restaurantId }: { item: ApiMenuItem; restaurantId:
         </div>
       </div>
 
-      <div className="flex flex-col items-end justify-between gap-3 shrink-0">
+      <div className="flex shrink-0 flex-col items-end justify-between gap-3">
         {item.imageUrl && (
-          <div className="relative h-20 w-20 overflow-hidden rounded-lg">
-            <Image src={item.imageUrl} alt={item.name} fill className="object-cover" sizes="80px" />
+          <div className="relative h-20 w-20 overflow-hidden rounded-xl">
+            <Image src={item.imageUrl} alt="" fill className="object-cover" sizes="80px" />
           </div>
         )}
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleAdd}
-          className="flex items-center gap-1 rounded-full bg-[var(--theme-primary)] px-3 py-1.5 text-xs font-semibold text-white shadow-sm"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Add
-        </motion.button>
+        <AnimatePresence mode="popLayout" initial={false}>
+          {inCart ? (
+            <motion.div
+              key="stepper"
+              variants={countSwap}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="flex items-center rounded-full bg-orange-700 text-white shadow-sm"
+            >
+              <motion.button {...press} type="button" onClick={handleDecrement} aria-label={`Remove one ${item.name}`} className={cn('grid h-10 w-10 place-items-center rounded-full hover:bg-orange-800', focusRing)}>
+                <Minus className="h-4 w-4" aria-hidden="true" />
+              </motion.button>
+              <span className="relative inline-grid w-5 justify-center overflow-hidden text-sm font-bold tabular-nums" aria-live="polite">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span key={inCart.quantity} variants={countSwap} initial="hidden" animate="visible" exit="exit">
+                    {inCart.quantity}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
+              <motion.button {...press} type="button" onClick={handleIncrement} aria-label={`Add one more ${item.name}`} className={cn('grid h-10 w-10 place-items-center rounded-full hover:bg-orange-800', focusRing)}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+              </motion.button>
+            </motion.div>
+          ) : (
+            <motion.button
+              key="add"
+              {...press}
+              variants={countSwap}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              type="button"
+              onClick={handleAdd}
+              aria-label={`Add ${item.name} to cart`}
+              className={cn('flex h-10 items-center gap-1 rounded-full bg-orange-700 px-4 text-sm font-semibold text-white shadow-sm hover:bg-orange-800', focusRing)}
+            >
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Add
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
-    </motion.div>
+    </motion.li>
   )
 }
 
@@ -160,7 +197,7 @@ export default function RestaurantDetailPage() {
   const [activeCategory, setActiveCategory] = useState<string>('')
   const [menuSearch, setMenuSearch] = useState('')
   const [cartOpen, setCartOpen] = useState(false)
-  const totalItems = useCartStore(s => s.totalItems)
+  const totalItems = useCartStore(selectItemCount)
 
   useEffect(() => {
     if (!slug) return
@@ -192,10 +229,10 @@ export default function RestaurantDetailPage() {
       <>
         <Header />
         <div className="min-h-screen bg-[var(--theme-background)]">
-          <div className="h-64 animate-pulse bg-[var(--theme-border)]" />
+          <div className="h-56 animate-pulse bg-[var(--theme-border)] motion-reduce:animate-none md:h-72" />
           <div className="container mx-auto max-w-4xl px-4 py-8 space-y-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-20 animate-pulse rounded-xl bg-[var(--theme-border)]" />
+              <div key={i} className="h-24 animate-pulse rounded-2xl bg-[var(--theme-border)] motion-reduce:animate-none" />
             ))}
           </div>
         </div>
@@ -233,12 +270,12 @@ export default function RestaurantDetailPage() {
 
           <div className="absolute top-4 left-4">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              {...press}
+              type="button"
               onClick={() => router.back()}
-              className="flex items-center gap-1.5 rounded-full bg-black/40 backdrop-blur-sm px-3 py-1.5 text-sm text-white"
+              className="flex h-10 items-center gap-1.5 rounded-full bg-black/45 px-4 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               Back
             </motion.button>
           </div>
@@ -251,18 +288,18 @@ export default function RestaurantDetailPage() {
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <h1 className="text-2xl font-bold text-white drop-shadow-md truncate">{displayRest.name}</h1>
+                <h1 className="truncate text-2xl font-extrabold tracking-tight text-white drop-shadow-md md:text-4xl">{displayRest.name}</h1>
                 <div className="flex flex-wrap items-center gap-2 mt-1">
                   <span className={cn(
                     'text-xs font-semibold rounded-full px-2 py-0.5',
                     displayRest.isOpen
-                      ? 'bg-green-500/20 text-green-300 border border-green-500/40'
-                      : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                      ? 'bg-emerald-500/25 text-emerald-100 border border-emerald-300/50'
+                      : 'bg-red-500/25 text-red-100 border border-red-300/50'
                   )}>
                     {displayRest.isOpen ? 'Open Now' : 'Closed'}
                   </span>
                   {displayRest.cuisines?.map(c => (
-                    <span key={c.id} className="text-xs text-white/80">{c.name}</span>
+                    <span key={c.id} className="text-xs text-white/90">{c.name}</span>
                   ))}
                 </div>
               </div>
@@ -273,9 +310,9 @@ export default function RestaurantDetailPage() {
         {/* Stats bar */}
         <div className="border-b border-[var(--theme-border)] bg-[var(--theme-surface)]">
           <div className="container mx-auto max-w-4xl px-4">
-            <div className="flex items-center gap-4 py-3 overflow-x-auto scrollbar-none">
+            <div className="-mx-4 flex items-center gap-3 overflow-x-auto px-4 py-3 [scrollbar-width:none]">
               <RatingBadge rating={displayRest.rating} count={displayRest.reviewCount} />
-              <div className="h-4 w-px bg-[var(--theme-border)]" />
+              <div className="h-4 w-px shrink-0 bg-[var(--theme-border)]" aria-hidden="true" />
               <StatPill icon={Clock} label={`${displayRest.estimatedDeliveryTime} min`} />
               <StatPill
                 icon={Truck}
@@ -285,8 +322,8 @@ export default function RestaurantDetailPage() {
               />
               <StatPill icon={ShoppingBag} label={`Min AED ${displayRest.minOrderAmount}`} />
               {displayRest.acceptsCash && <StatPill icon={Tag} label="Cash accepted" />}
-              <div className="flex items-center gap-1.5 text-xs text-[var(--theme-text-muted)]">
-                <MapPin className="h-3.5 w-3.5" />
+              <div className="flex shrink-0 items-center gap-1.5 text-xs text-[var(--theme-text-muted)]">
+                <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
                 <span className="truncate max-w-40">{displayRest.address}</span>
               </div>
             </div>
@@ -296,16 +333,18 @@ export default function RestaurantDetailPage() {
         <div className="container mx-auto max-w-4xl px-4 py-6">
           {/* Menu search */}
           <div className="relative mb-5">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--theme-text-muted)]" />
+            <label htmlFor="menu-search" className="sr-only">Search the menu</label>
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--theme-text-muted)]" aria-hidden="true" />
             <input
-              type="text"
+              id="menu-search"
+              type="search"
               placeholder="Search the menu…"
               value={menuSearch}
               onChange={e => setMenuSearch(e.target.value)}
               className={cn(
-                'w-full rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] py-3 pl-10 pr-4',
-                'text-sm text-[var(--theme-text)] placeholder:text-[var(--theme-text-muted)]',
-                'focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:border-transparent',
+                'h-12 w-full rounded-xl border border-[var(--theme-border)] bg-[var(--theme-surface)] pl-10 pr-4',
+                'text-base text-[var(--theme-text)] placeholder:text-[var(--theme-text-muted)]',
+                'focus:outline-none focus:ring-2 focus:ring-[var(--theme-ring)] focus:border-transparent',
                 'transition-shadow'
               )}
             />
@@ -313,53 +352,71 @@ export default function RestaurantDetailPage() {
 
           {/* Category tabs */}
           {menu.length > 1 && (
-            <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-none pb-1">
-              {menu.map(cat => (
-                <motion.button
-                  key={cat.id}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setActiveCategory(cat.id)
-                    document.getElementById(`cat-${cat.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                  }}
-                  className={cn(
-                    'shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all',
-                    activeCategory === cat.id
-                      ? 'bg-[var(--theme-primary)] text-white shadow-sm'
-                      : 'bg-[var(--theme-surface)] text-[var(--theme-text-muted)] border border-[var(--theme-border)] hover:border-[var(--theme-primary)]'
-                  )}
-                >
-                  {cat.name}
-                </motion.button>
-              ))}
-            </div>
+            <nav
+              aria-label="Menu categories"
+              className="sticky top-[61px] z-20 -mx-4 mb-6 border-b border-[var(--theme-border)] bg-[var(--theme-background)]/90 px-4 py-2 backdrop-blur-md"
+            >
+              <div className="flex gap-2 overflow-x-auto [scrollbar-width:none]">
+                {menu.map(cat => {
+                  const active = activeCategory === cat.id
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      aria-current={active ? 'true' : undefined}
+                      onClick={() => {
+                        setActiveCategory(cat.id)
+                        document.getElementById(`cat-${cat.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      }}
+                      className={cn(
+                        'relative isolate h-10 shrink-0 rounded-full px-4 text-sm font-medium transition-colors duration-200',
+                        focusRing,
+                        active
+                          ? 'text-white'
+                          : 'border border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-text-muted)] hover:border-orange-400 hover:text-[var(--theme-text)]'
+                      )}
+                    >
+                      {active && (
+                        <motion.span
+                          layoutId="menu-category-pill"
+                          transition={spring.layout}
+                          className="absolute inset-0 -z-10 rounded-full bg-orange-700 shadow-sm"
+                        />
+                      )}
+                      {cat.name}
+                    </button>
+                  )
+                })}
+              </div>
+            </nav>
           )}
 
           {/* Menu sections */}
           <div className="space-y-8">
             {filteredMenu.length === 0 ? (
-              <div className="text-center py-12 text-[var(--theme-text-muted)]">
-                <Search className="h-10 w-10 mx-auto mb-3 opacity-30" />
+              <div className="py-12 text-center text-[var(--theme-text-muted)]" role="status">
+                <Search className="mx-auto mb-3 h-10 w-10 opacity-30" aria-hidden="true" />
                 <p>No items match your search</p>
               </div>
             ) : (
               filteredMenu.map(cat => (
-                <motion.section
-                  key={cat.id}
-                  id={`cat-${cat.id}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <h3 className="text-lg font-bold text-[var(--theme-text)] mb-3 pb-2 border-b border-[var(--theme-border)]">
+                <section key={cat.id} id={`cat-${cat.id}`} aria-labelledby={`cat-${cat.id}-title`} className="scroll-mt-32">
+                  <h3 id={`cat-${cat.id}-title`} className="mb-3 flex items-baseline gap-2 text-lg font-bold text-[var(--theme-text)]">
                     {cat.name}
+                    <span className="text-sm font-normal text-[var(--theme-text-muted)]">{cat.items.length}</span>
                   </h3>
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <motion.ul
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={revealViewport}
+                    variants={staggerContainer(0.05)}
+                    className="grid gap-3 sm:grid-cols-2"
+                  >
                     {cat.items.map(item => (
                       <MenuItemCard key={item.id} item={item} restaurantId={displayRest.id} />
                     ))}
-                  </div>
-                </motion.section>
+                  </motion.ul>
+                </section>
               ))
             )}
           </div>
@@ -370,21 +427,24 @@ export default function RestaurantDetailPage() {
       <AnimatePresence>
         {totalItems > 0 && (
           <motion.button
-            initial={{ y: 80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 80, opacity: 0 }}
+            {...press}
+            type="button"
+            variants={floatUp}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             onClick={() => setCartOpen(true)}
             className={cn(
-              'fixed bottom-6 left-1/2 -translate-x-1/2 z-30',
-              'flex items-center gap-3 rounded-full px-6 py-3.5',
-              'bg-[var(--theme-primary)] text-white shadow-2xl',
-              'font-semibold text-sm'
+              'fixed bottom-6 left-1/2 z-30 -translate-x-1/2',
+              'flex h-12 max-w-[calc(100vw-2rem)] items-center gap-3 rounded-full px-6',
+              'bg-orange-700 text-sm font-semibold text-white shadow-2xl shadow-orange-900/30 hover:bg-orange-800',
+              focusRing
             )}
           >
-            <ShoppingCart className="h-5 w-5" />
-            <span>{totalItems} item{totalItems > 1 ? 's' : ''}</span>
-            <span className="opacity-70">·</span>
-            <span>View Cart</span>
+            <ShoppingCart className="h-5 w-5 shrink-0" aria-hidden="true" />
+            <span className="whitespace-nowrap">{totalItems} item{totalItems > 1 ? 's' : ''}</span>
+            <span className="h-4 w-px bg-white/40" aria-hidden="true" />
+            <span className="whitespace-nowrap">View Cart</span>
           </motion.button>
         )}
       </AnimatePresence>

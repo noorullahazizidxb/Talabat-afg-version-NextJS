@@ -3,166 +3,100 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
-import { Menu, X, ShoppingBag, Search, User, Moon, Sun } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Menu, X, Search, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useTheme, cn } from '@/utils/theme'
+import { cn } from '@/utils/theme'
+import { dropdown, dropdownItem, press } from '@/utils/motion'
+import { brandBar, brandIconButton, brandLogoLink, brandMobilePanel, brandPill, brandSearchInput } from './styles'
 
 export default function MainNavbar() {
   const [open, setOpen] = useState(false)
   const router = useRouter()
-  const { resolvedTheme, toggleTheme } = useTheme()
-  const isDark = resolvedTheme === 'dark'
 
-  const handleCorporateClick = () => {
-    router.push('/corporate')
-  }
-
-  const handlePartnerClick = () => {
-    router.push('/partner')
-  }
+  const navActions = [
+    { label: 'Corporate', onSelect: () => router.push('/corporate') },
+    { label: 'Become a partner', onSelect: () => router.push('/partner') },
+  ]
 
   return (
-    <motion.header 
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-      className={cn(
-        "sticky top-0 z-50 text-white transition-colors duration-200 shadow-lg border-1 border-dark border-solid border-inset",
-        isDark ? "bg-orange-900" : "bg-orange-500"
-      )}
-    >
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Left side nav items */}
-        <div className="hidden md:flex items-center space-x-6">
-          <button 
-            onClick={handleCorporateClick}
-            className={cn(
-              "transition-colors px-4 py-1.5 rounded-[30px] border border-white",
-              isDark 
-                ? "text-white hover:text-orange-200 hover:bg-orange-800" 
-                : "text-white hover:text-orange-100 hover:bg-orange-600"
-            )}
-          >
-            Corporate
-          </button>
-          <button 
-            onClick={handlePartnerClick}
-            className={cn(
-              "transition-colors px-4 py-1.5 rounded-[30px] border border-white",
-              isDark 
-                ? "text-white hover:text-orange-200 hover:bg-orange-800" 
-                : "text-white hover:text-orange-100 hover:bg-orange-600"
-            )}
-          >
-            Become a partner
-          </button>
-        </div>
+    <header className={brandBar}>
+      <div className="container mx-auto flex items-center justify-between gap-3 px-4 py-2.5">
+        <nav aria-label="Company" className="hidden items-center gap-3 md:flex">
+          {navActions.map(action => (
+            <motion.button key={action.label} {...press} type="button" onClick={action.onSelect} className={brandPill}>
+              {action.label}
+            </motion.button>
+          ))}
+        </nav>
 
-        {/* Logo */}
-        <Link href="/">
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2"
-          >
-            <Image 
-              src="/images/logo.png" 
-              alt="Talabat" 
-              width={120} 
-              height={40}
-              className="h-10 w-auto"
-            />
-          </motion.div>
+        <Link
+          href="/"
+          aria-label="talabat home"
+          className={brandLogoLink}
+        >
+          <Image src="/images/logo.png" alt="Talabat" width={120} height={40} className="h-10 w-auto" />
         </Link>
 
-        {/* Search bar */}
-        <div className="hidden md:flex items-center relative max-w-md w-full mx-4">
-          <div className="relative w-full">
-            <input 
-              type="text" 
-              placeholder="Search for restaurants or food..." 
-              className={cn(
-                "w-full py-2 pl-10 pr-4 rounded-[30px] border border-white focus:outline-none transition-colors",
-                isDark 
-                  ? "bg-orange-800 text-white placeholder-orange-200" 
-                  : "bg-orange-400 text-white placeholder-orange-100"
-              )}
-            />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white" />
-          </div>
-        </div>
-        
-        {/* Right side actions */}
-        <div className="flex items-center gap-3">
-          {/* Theme toggle button removed */}
-          
-          {/* User button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={cn(
-              "p-2 rounded-[30px] transition-colors border border-white",
-              isDark 
-                ? "hover:bg-orange-800" 
-                : "hover:bg-orange-600"
-            )}
-          >
-            <User className="h-5 w-5" />
+        <form role="search" onSubmit={e => e.preventDefault()} className="relative mx-4 hidden w-full max-w-md md:flex">
+          <label htmlFor="main-navbar-search" className="sr-only">
+            Search for restaurants or food
+          </label>
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-white" aria-hidden="true" />
+          <input
+            id="main-navbar-search"
+            type="search"
+            placeholder="Search for restaurants or food..."
+            className={brandSearchInput}
+          />
+        </form>
+
+        <div className="flex items-center gap-2">
+          <motion.button {...press} type="button" aria-label="Account" className={brandIconButton}>
+            <User className="h-5 w-5" aria-hidden="true" />
           </motion.button>
 
-          {/* Mobile menu button */}
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={cn(
-              "md:hidden p-2 rounded-[30px] transition-colors border border-white",
-              isDark 
-                ? "hover:bg-orange-800" 
-                : "hover:bg-orange-600"
-            )}
-            onClick={() => setOpen(!open)}
-            aria-label="Toggle menu"
+            {...press}
+            type="button"
+            className={cn(brandIconButton, 'md:hidden')}
+            onClick={() => setOpen(v => !v)}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="main-navbar-mobile"
           >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {open ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
           </motion.button>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
-      {open && (
-        <div className={cn(
-          "md:hidden border-t transition-colors duration-200",
-          isDark 
-            ? "border-orange-800 bg-orange-900" 
-            : "border-orange-400 bg-orange-500"
-        )}>
-          <div className="container mx-auto px-4 py-3 space-y-2">
-            <button 
-              onClick={handleCorporateClick}
-              className={cn(
-                "block w-full text-left py-2 px-3 text-white rounded-[30px] transition-colors border border-white",
-                isDark 
-                  ? "hover:bg-orange-800" 
-                  : "hover:bg-orange-600"
-              )}
-            >
-              Corporate
-            </button>
-            <button 
-              onClick={handlePartnerClick}
-              className={cn(
-                "block w-full text-left py-2 px-3 text-white rounded-[30px] transition-colors border border-white",
-                isDark 
-                  ? "hover:bg-orange-800" 
-                  : "hover:bg-orange-600"
-              )}
-            >
-              Become a partner
-            </button>
-          </div>
-        </div>
-      )}
-    </motion.header>
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            id="main-navbar-mobile"
+            aria-label="Company mobile"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={dropdown}
+            className={cn(brandMobilePanel, 'md:hidden')}
+          >
+            <ul className="container mx-auto space-y-2 px-4 py-3">
+              {navActions.map(action => (
+                <motion.li key={action.label} variants={dropdownItem}>
+                  <button
+                    type="button"
+                    onClick={action.onSelect}
+                    className={cn(brandPill, 'h-11 w-full justify-start px-4')}
+                  >
+                    {action.label}
+                  </button>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </header>
   )
 }

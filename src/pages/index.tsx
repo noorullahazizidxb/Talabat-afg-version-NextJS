@@ -1,24 +1,27 @@
 import LocationSearch from '@/components/LocationSearch'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import AuthModal from '@/components/AuthModal'
 import '@/styles/globals.css'
 import MainNavbar from '@/components/navbar/MainNavbar'
 import Image from 'next/image'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, ShoppingBag, ShoppingCart, Flower, Pill, Heart, Moon, Sun, LogIn, UserPlus } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useTheme, cn } from '@/utils/theme'
+import { ShoppingBag, ShoppingCart, Flower, Pill, Heart, UserPlus } from 'lucide-react'
 import Footer from '@/components/Footer'
+import SectionCard, { type SectionCardProps } from '@/components/SectionCard'
+import { press, revealViewport, staggerContainer } from '@/utils/motion'
 
-const categoryCards = [
+interface CategoryCard extends SectionCardProps {
+  id: string
+}
+
+const categoryCards: CategoryCard[] = [
   {
     id: 'food',
     title: 'Order food',
     description: 'Find deals, free delivery, and time from your favorite restaurants',
     image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=500&auto=format&fit=crop',
-    icon: <ShoppingBag className="h-6 w-6" />,
-    href: '/category/food',
+    icon: ShoppingBag,
+    href: '/restaurants',
     buttonText: 'Order now'
   },
   {
@@ -26,7 +29,7 @@ const categoryCards = [
     title: 'Order groceries',
     description: 'Don\'t stand in line. Order from your favorite stores and get groceries delivered to you',
     image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=500&auto=format&fit=crop',
-    icon: <ShoppingCart className="h-6 w-6" />,
+    icon: ShoppingCart,
     href: '/grocery',
     buttonText: 'Shop now'
   },
@@ -35,8 +38,8 @@ const categoryCards = [
     title: 'Order flowers',
     description: 'Whatever the occasion, say it with flowers. We deliver to your loved ones',
     image: 'https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=500&auto=format&fit=crop',
-    icon: <Flower className="h-6 w-6" />,
-    href: '/category/flowers',
+    icon: Flower,
+    href: '/flowers',
     buttonText: 'Shop now'
   },
   {
@@ -44,8 +47,8 @@ const categoryCards = [
     title: 'Order medicine',
     description: 'Get the medicine you need delivered to your door',
     image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=500&auto=format&fit=crop',
-    icon: <Pill className="h-6 w-6" />,
-    href: '/category/medicine',
+    icon: Pill,
+    href: '/catagory/medicine',
     buttonText: 'Shop now'
   },
   {
@@ -53,8 +56,8 @@ const categoryCards = [
     title: 'Donations',
     description: 'Help those in need with a donation. Together we can make a difference',
     image: 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=500&auto=format&fit=crop',
-    icon: <Heart className="h-6 w-6" />,
-    href: '/donations',
+    icon: Heart,
+    href: '/catagory/donations',
     buttonText: 'Donate now'
   },
   {
@@ -62,167 +65,92 @@ const categoryCards = [
     title: 'talabat mart',
     description: 'Get anything you need, delivered in 20 minutes with talabat mart',
     image: 'https://images.unsplash.com/photo-1604719312566-8912e9c8a213?q=80&w=500&auto=format&fit=crop',
-    icon: <ShoppingBag className="h-6 w-6" />,
-    href: '/talabat-mart',
+    icon: ShoppingBag,
+    href: '/catagory/mart',
     buttonText: 'Shop now'
   }
 ];
 
 export default function Home() {
   const [authOpen, setAuthOpen] = useState(false)
-  const router = useRouter()
-  const { resolvedTheme, toggleTheme } = useTheme()
-  const isDark = resolvedTheme === 'dark'
-
-  // Handle location selection redirect
-  const handleLocationSelected = (location: string) => {
-    // Redirect to restaurants page with the selected location
-    router.push('/restaurants')
-  }
 
   return (
     <>
-    <div className={cn(
-      "min-h-screen transition-colors duration-200",
-      isDark ? "bg-gray-900 text-white" : "bg-orange-50 text-gray-900"
-    )}>
+    <div className="min-h-screen bg-orange-50 text-gray-900 transition-colors duration-200 dark:bg-gray-900 dark:text-white">
       <MainNavbar />
-      
 
-      {/* Hero section */}
-      <div className={cn(
-        "text-white py-14 md:py-20 transition-colors duration-200",
-        isDark ? "bg-orange-900" : "bg-orange-500"
-      )}>
+      <section
+        aria-labelledby="home-hero-title"
+        className="relative isolate overflow-hidden bg-orange-500 py-14 text-white transition-colors duration-200 md:py-20 dark:bg-orange-900"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-60 [background-image:radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.22),transparent_45%),radial-gradient(circle_at_85%_90%,rgba(124,45,18,0.45),transparent_50%)]"
+        />
         <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-center text-center max-w-3xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-8"
-            >
-              <Image 
-                src="/images/logo.png" 
-                alt="Talabat" 
-                width={200} 
-                height={60} 
-                className="mx-auto"
-              />
-            </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-4xl md:text-5xl font-bold tracking-tight text-balance text-white mb-4"
+          <div className="mx-auto flex max-w-3xl flex-col items-center justify-center text-center">
+            <Image
+              src="/images/logo.png"
+              alt="Talabat"
+              width={200}
+              height={60}
+              priority
+              className="mx-auto mb-8 h-auto w-[160px] md:w-[200px]"
+            />
+
+            <h1
+              id="home-hero-title"
+              className="mb-4 text-balance text-4xl font-extrabold tracking-tight text-white md:text-6xl"
             >
               Welcome to talabat
-            </motion.h1>
-            
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-lg md:text-xl text-white/90 mb-8 text-pretty"
-            >
+            </h1>
+
+            <p className="mb-8 text-pretty text-lg text-white/90 md:text-xl">
               Fast delivery of food, groceries and more
-            </motion.p>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="w-full max-w-xl"
-            >
+            </p>
+
+            <div className="w-full max-w-xl">
               <LocationSearch />
-            </motion.div>
-            
-            <motion.button 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              onClick={() => setAuthOpen(true)} 
+            </div>
+
+            <motion.button
+              {...press}
+              type="button"
+              onClick={() => setAuthOpen(true)}
               className="mt-6 inline-flex h-11 items-center gap-2 rounded-full border border-white/80 px-5 font-medium text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              <UserPlus className="h-4 w-4" />
+              <UserPlus className="h-4 w-4" aria-hidden="true" />
               Login or Signup
             </motion.button>
           </div>
         </div>
-      </div>
-      
-      {/* Category cards section */}
-      <div className={cn(
-        "py-12 transition-colors duration-200",
-        isDark ? "bg-gray-800" : "bg-white"
-      )}>
+      </section>
+
+      <section
+        aria-labelledby="home-categories-title"
+        className="bg-white py-12 transition-colors duration-200 md:py-16 dark:bg-gray-800"
+      >
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categoryCards.map((card, index) => (
-              <motion.div
-                key={card.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ 
-                  duration: 0.5, 
-                  delay: index * 0.1,
-                  type: 'spring',
-                  stiffness: 50
-                }}
-                className={cn(
-                  "rounded-xl overflow-hidden shadow-md transition-colors duration-200",
-                  isDark 
-                    ? "bg-gray-700 border border-gray-600" 
-                    : "bg-white border border-orange-100"
-                )}
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/10 z-10" />
-                  <div className={cn(
-                    "absolute top-4 left-4 z-20 text-white p-2 rounded-[30px] transition-colors duration-200 border border-white",
-                    isDark ? "bg-orange-700" : "bg-orange-500"
-                  )}>
-                    {card.icon}
-                  </div>
-                  <Image 
-                    src={card.image} 
-                    alt={card.title}
-                    width={500}
-                    height={300}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                  />
-                </div>
-                
-                <div className="p-5">
-                  <h3 className={cn(
-                    "text-xl font-bold mb-2 transition-colors duration-200",
-                    isDark ? "text-gray-100" : "text-gray-800"
-                  )}>{card.title}</h3>
-                  <p className={cn(
-                    "text-sm mb-4 transition-colors duration-200",
-                    isDark ? "text-gray-300" : "text-gray-600"
-                  )}>{card.description}</p>
-                  
-                  <Link href={card.href}>
-                    <div className={cn(
-                      "inline-flex items-center gap-2 px-4 py-2 rounded-[30px] text-white font-medium transition-all duration-200 border border-white",
-                      isDark 
-                        ? "bg-orange-700 hover:bg-orange-800" 
-                        : "bg-orange-500 hover:bg-orange-600"
-                    )}>
-                      {card.buttonText}
-                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-                    </div>
-                  </Link>
-                </div>
-              </motion.div>
+          <h2
+            id="home-categories-title"
+            className="mb-8 text-balance text-2xl font-bold tracking-tight text-gray-900 md:text-3xl dark:text-gray-100"
+          >
+            What can we bring you today?
+          </h2>
+          <motion.ul
+            initial="hidden"
+            whileInView="visible"
+            viewport={revealViewport}
+            variants={staggerContainer(0.07)}
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            {categoryCards.map(({ id, ...card }) => (
+              <SectionCard key={id} {...card} />
             ))}
-          </div>
+          </motion.ul>
         </div>
-      </div>
-      
+      </section>
+
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </div>
     <Footer/>
