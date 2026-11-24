@@ -1,4 +1,19 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api/v1';
+const DEV_API_URL = 'http://localhost:3001/api/v1';
+
+/**
+ * Backend base URL. Falls back to the local NestJS server only in development, so a
+ * deployment without NEXT_PUBLIC_API_URL never fires requests at the visitor's localhost;
+ * callers then receive ApiUnavailableError and render their built-in demo data.
+ */
+const BASE_URL: string | null =
+  process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === 'development' ? DEV_API_URL : null);
+
+export class ApiUnavailableError extends Error {
+  constructor() {
+    super('The ordering service is not available right now. Please try again later.');
+    this.name = 'ApiUnavailableError';
+  }
+}
 
 function getToken(): string | null {
   if (typeof window === 'undefined') return null;
@@ -13,6 +28,7 @@ function getToken(): string | null {
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  if (BASE_URL === null) throw new ApiUnavailableError();
   const token = getToken();
   const res = await fetch(`${BASE_URL}${path}`, {
     ...init,
