@@ -1,111 +1,59 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
-import { cn } from '../utils/theme'
+import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { ArrowRight, type LucideIcon } from 'lucide-react'
+import { fadeUp, lift } from '@/utils/motion'
 
-interface SectionCardProps {
+export interface SectionCardProps {
   title: string
   description: string
   image: string
-  buttonText: string
+  icon: LucideIcon
   href: string
-  index?: number
+  buttonText: string
 }
 
-export default function SectionCard({ 
-  title, 
-  description, 
-  image, 
-  buttonText, 
-  href,
-  index = 0 
-}: SectionCardProps) {
+/**
+ * Service tile (food, groceries, flowers…). Renders an `<li>` driven by the
+ * parent's `hidden`/`visible` variants, so place it inside a staggered `<motion.ul>`.
+ */
+export default function SectionCard({ title, description, image, icon: Icon, href, buttonText }: SectionCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ 
-        duration: 0.5, 
-        delay: index * 0.1,
-        type: 'spring',
-        stiffness: 50
-      }}
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className={cn(
-        "bg-surface-light dark:bg-surface-dark",
-        "rounded-2xl shadow-lg overflow-hidden",
-        "border border-gray-100 dark:border-gray-800",
-        "transform transition-all duration-300",
-        "flex flex-col h-full"
-      )}
-    >
-      <div className="relative h-48 w-full overflow-hidden">
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.3 }}
-          className="h-full w-full"
+    <motion.li variants={fadeUp} className="h-full">
+      <motion.div {...lift} className="h-full">
+        <Link
+          href={href}
+          className="group flex h-full flex-col overflow-hidden rounded-2xl border border-orange-100 bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl hover:shadow-orange-900/10 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500 dark:border-gray-700 dark:bg-gray-800 dark:hover:shadow-black/40"
         >
-          <Image 
-            src={image} 
-            alt={title} 
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover"
-          />
-        </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
-      </div>
-      
-      <div className="p-6 flex flex-col flex-grow space-y-3">
-        <motion.h3 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: (index * 0.1) + 0.2 }}
-          viewport={{ once: true }}
-          className="text-xl font-semibold text-gray-900 dark:text-gray-100"
-        >
-          {title}
-        </motion.h3>
-        
-        <motion.p 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: (index * 0.1) + 0.3 }}
-          viewport={{ once: true }}
-          className="text-gray-600 dark:text-gray-300 flex-grow"
-        >
-          {description}
-        </motion.p>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: (index * 0.1) + 0.4 }}
-          viewport={{ once: true }}
-          className="mt-4"
-        >
-          <Link href={href}>
-            <motion.div
-              whileHover={{ x: 5 }}
-              whileTap={{ scale: 0.98 }}
-              className={cn(
-                "group inline-flex items-center gap-2",
-                "px-4 py-2 rounded-lg", 
-                "bg-accent-500 hover:bg-accent-600",
-                "text-white font-medium",
-                "transition-all duration-200"
-              )}
-            >
+          <div className="relative aspect-[5/3] overflow-hidden">
+            <Image
+              src={image}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/5 to-transparent" />
+            <span className="absolute left-4 top-4 grid h-10 w-10 place-items-center rounded-full border border-white/80 bg-orange-500 text-white shadow-md dark:bg-orange-600">
+              <Icon className="h-5 w-5" aria-hidden="true" />
+            </span>
+          </div>
+
+          <div className="flex flex-1 flex-col p-5">
+            <h3 className="mb-1.5 text-xl font-bold text-gray-900 dark:text-gray-100">{title}</h3>
+            <p className="mb-5 text-pretty text-sm leading-relaxed text-gray-600 dark:text-gray-300">{description}</p>
+            <span className="mt-auto inline-flex h-10 w-fit items-center gap-2 rounded-full bg-orange-700 px-4 text-sm font-semibold text-white transition-colors duration-200 group-hover:bg-orange-800">
               {buttonText}
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </motion.div>
-          </Link>
-        </motion.div>
-      </div>
-    </motion.div>
+              <ArrowRight
+                className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none"
+                aria-hidden="true"
+              />
+            </span>
+          </div>
+        </Link>
+      </motion.div>
+    </motion.li>
   )
 }

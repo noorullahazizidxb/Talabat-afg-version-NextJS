@@ -3,15 +3,16 @@
 import Head from 'next/head'
 import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, SlidersHorizontal, Star, Clock, Truck, X, ShoppingCart, RotateCcw } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
+import { Search, SlidersHorizontal, X, ShoppingCart } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CartDrawer from '@/components/CartDrawer'
+import RestaurantCard from '@/components/RestaurantCard'
+import FiltersPanel, { DEFAULT_FILTERS, FilterChip, countActiveFilters, type RestaurantFilters } from '@/components/FiltersPanel'
 import { cn } from '@/utils/theme'
 import { api, ApiRestaurant, ApiCuisine, PaginatedResponse } from '@/utils/api'
-import { useCartStore } from '@/store/cartStore'
+import { selectItemCount, useCartStore } from '@/store/cartStore'
+import { fadeUp, floatUp, press, spring } from '@/utils/motion'
 
 const DEMO: ApiRestaurant[] = [
   { id: '1', name: 'Vegan Burger', slug: 'vegan-burger', isOpen: true, rating: 4.8, reviewCount: 132, estimatedDeliveryTime: 47, deliveryFee: 0, freeDeliveryThreshold: 40, minOrderAmount: 20, preparationTime: 15, lat: 0, lng: 0, address: 'Al Barsha', acceptsCash: true, acceptsCard: false, cuisines: [{ id: 'c1', name: 'Burgers', slug: 'burgers' }, { id: 'c2', name: 'Healthy', slug: 'healthy' }], area: { id: 'a1', name: 'Al Barsha', slug: 'al-barsha', city: 'Dubai' } } as ApiRestaurant,
@@ -22,73 +23,16 @@ const DEMO: ApiRestaurant[] = [
   { id: '6', name: 'Thai Wok', slug: 'thai-wok', isOpen: true, rating: 4.6, reviewCount: 178, estimatedDeliveryTime: 35, deliveryFee: 7, minOrderAmount: 40, preparationTime: 15, lat: 0, lng: 0, address: 'Bur Dubai', acceptsCash: true, acceptsCard: false, cuisines: [{ id: 'c9', name: 'Thai', slug: 'thai' }], area: { id: 'a6', name: 'Bur Dubai', slug: 'bur-dubai', city: 'Dubai' } } as ApiRestaurant,
 ]
 
-type SortKey = 'rating' | 'deliveryTime' | 'deliveryFee' | 'name'
-
-interface Filters {
-  cuisineSlug: string
-  freeDelivery: boolean
-  openNow: boolean
-  sortBy: SortKey
-}
-
-const DEFAULT_FILTERS: Filters = { cuisineSlug: '', freeDelivery: false, openNow: false, sortBy: 'rating' }
-
-function RestaurantCard({ restaurant, index }: { restaurant: ApiRestaurant; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.3), type: 'spring', stiffness: 100 }}
-    >
-      <Link href={`/restaurants/${restaurant.slug}`} className="group block">
-        <div className={cn(
-          'rounded-2xl overflow-hidden border transition-all duration-300',
-          'bg-[var(--theme-surface)] border-[var(--theme-border)]',
-          'hover:shadow-lg hover:-translate-y-1 hover:border-[var(--theme-primary)]/30'
-        )}>
-          <div className="relative h-44 bg-[var(--theme-surface-elevated)] overflow-hidden">
-            {restaurant.coverImageUrl ? (
-              <Image src={restaurant.coverImageUrl} alt={restaurant.name} fill sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg,var(--theme-brand-start)22,var(--theme-brand-end)22)' }}>
-                <span className="text-5xl font-black text-[var(--theme-primary)] opacity-20 select-none">{restaurant.name[0]}</span>
-              </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-            <div className={cn('absolute top-3 left-3 rounded-full px-2.5 py-1 text-xs font-semibold', restaurant.isOpen ? 'bg-green-500 text-white' : 'bg-gray-700/80 text-gray-300')}>
-              {restaurant.isOpen ? 'Open' : 'Closed'}
-            </div>
-          </div>
-          <div className="p-4">
-            <h3 className="font-bold text-base text-[var(--theme-text)] truncate">{restaurant.name}</h3>
-            <p className="text-xs text-[var(--theme-text-muted)] mt-0.5 truncate">{restaurant.cuisines.map(c => c.name).join(' · ')}</p>
-            <div className="flex items-center gap-3 mt-3 text-xs text-[var(--theme-text-muted)]">
-              <span className="flex items-center gap-1 font-semibold text-[var(--theme-text)]">
-                <Star className="h-3.5 w-3.5 fill-[var(--theme-accent)] text-[var(--theme-accent)]" />
-                {restaurant.rating.toFixed(1)}
-              </span>
-              <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{restaurant.estimatedDeliveryTime} min</span>
-              <span className="flex items-center gap-1">
-                <Truck className="h-3.5 w-3.5" />
-                {restaurant.deliveryFee === 0 ? <span className="text-[var(--theme-success)] font-semibold">Free</span> : `AED ${restaurant.deliveryFee}`}
-              </span>
-            </div>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  )
-}
+const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-ring)]'
 
 function SkeletonCard() {
   return (
-    <div className="rounded-2xl overflow-hidden border border-[var(--theme-border)] bg-[var(--theme-surface)]">
-      <div className="h-44 animate-pulse bg-[var(--theme-border)]" />
-      <div className="p-4 space-y-2">
-        <div className="h-4 w-3/4 animate-pulse rounded bg-[var(--theme-border)]" />
-        <div className="h-3 w-1/2 animate-pulse rounded bg-[var(--theme-border)]" />
-        <div className="h-3 w-full animate-pulse rounded bg-[var(--theme-border)]" />
+    <div className="overflow-hidden rounded-2xl border border-[var(--theme-border)] bg-[var(--theme-surface)]" aria-hidden="true">
+      <div className="aspect-[16/9] animate-pulse bg-[var(--theme-border)] motion-reduce:animate-none" />
+      <div className="space-y-2 p-4">
+        <div className="h-4 w-3/4 animate-pulse rounded bg-[var(--theme-border)] motion-reduce:animate-none" />
+        <div className="h-3 w-1/2 animate-pulse rounded bg-[var(--theme-border)] motion-reduce:animate-none" />
+        <div className="h-3 w-full animate-pulse rounded bg-[var(--theme-border)] motion-reduce:animate-none" />
       </div>
     </div>
   )
@@ -99,10 +43,10 @@ export default function RestaurantsPage() {
   const [cuisines, setCuisines] = useState<ApiCuisine[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS)
+  const [filters, setFilters] = useState<RestaurantFilters>(DEFAULT_FILTERS)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
-  const totalItems = useCartStore(s => s.totalItems)
+  const totalItems = useCartStore(selectItemCount)
 
   useEffect(() => {
     Promise.all([
@@ -115,7 +59,7 @@ export default function RestaurantsPage() {
     })
   }, [])
 
-  const activeFilterCount = [filters.cuisineSlug !== '', filters.freeDelivery, filters.openNow, filters.sortBy !== 'rating'].filter(Boolean).length
+  const activeFilterCount = countActiveFilters(filters)
 
   const displayed = useMemo(() => {
     let list = restaurants.filter(r => {
@@ -132,7 +76,19 @@ export default function RestaurantsPage() {
     return list
   }, [restaurants, search, filters])
 
-  const setFilter = <K extends keyof Filters>(key: K, val: Filters[K]) => setFilters(prev => ({ ...prev, [key]: val }))
+  const cuisineChips = useMemo<ApiCuisine[]>(() => {
+    if (cuisines.length > 0) return cuisines.slice(0, 12)
+    const unique = new Map<string, ApiCuisine>()
+    restaurants.forEach(r => r.cuisines.forEach(c => unique.set(c.slug, c)))
+    return [...unique.values()].slice(0, 12)
+  }, [cuisines, restaurants])
+
+  const resetAll = () => {
+    setSearch('')
+    setFilters(DEFAULT_FILTERS)
+  }
+
+  const setFilter = <K extends keyof RestaurantFilters>(key: K, val: RestaurantFilters[K]) => setFilters(prev => ({ ...prev, [key]: val }))
 
   return (
     <>
@@ -141,87 +97,95 @@ export default function RestaurantsPage() {
       <main className="min-h-screen bg-[var(--theme-background)]">
         <div className="border-b border-[var(--theme-border)] bg-[var(--theme-surface)]">
           <div className="container mx-auto max-w-6xl px-4 py-6">
-            <motion.h1 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-bold text-[var(--theme-text)] mb-4">
+            <h1 className="mb-4 text-balance text-2xl font-bold tracking-tight text-[var(--theme-text)] md:text-3xl">
               Restaurants near you
-            </motion.h1>
+            </h1>
             <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--theme-text-muted)]" />
-                <input type="text" placeholder="Search restaurants or cuisines…" value={search} onChange={e => setSearch(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--theme-border)] bg-[var(--theme-background)] py-3 pl-10 pr-10 text-sm text-[var(--theme-text)] placeholder:text-[var(--theme-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--theme-primary)] focus:border-transparent" />
-                {search && <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--theme-text-muted)]"><X className="h-4 w-4" /></button>}
+              <div className="relative min-w-0 flex-1">
+                <label htmlFor="restaurant-search" className="sr-only">Search restaurants or cuisines</label>
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--theme-text-muted)]" aria-hidden="true" />
+                <input id="restaurant-search" type="search" placeholder="Search restaurants or cuisines…" value={search} onChange={e => setSearch(e.target.value)}
+                  className="h-12 w-full rounded-xl border border-[var(--theme-border)] bg-[var(--theme-background)] pl-10 pr-11 text-base text-[var(--theme-text)] placeholder:text-[var(--theme-text-muted)] focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--theme-ring)] [&::-webkit-search-cancel-button]:hidden" />
+                <AnimatePresence>
+                  {search && (
+                    <motion.button
+                      {...press}
+                      type="button"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      onClick={() => setSearch('')}
+                      aria-label="Clear search"
+                      className={cn('absolute right-1 top-1 grid h-10 w-10 place-items-center rounded-lg text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]', focusRing)}
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
               </div>
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => setFiltersOpen(v => !v)}
-                className={cn('flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-colors', activeFilterCount > 0 ? 'border-[var(--theme-primary)] bg-[var(--theme-primary)] text-white' : 'border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-text)]')}>
-                <SlidersHorizontal className="h-4 w-4" />
+              <motion.button {...press} type="button" onClick={() => setFiltersOpen(v => !v)}
+                aria-expanded={filtersOpen} aria-controls="restaurant-filters"
+                aria-label={activeFilterCount > 0 ? `Filters, ${activeFilterCount} active` : 'Filters'}
+                className={cn('flex h-12 shrink-0 items-center gap-2 rounded-xl border px-4 text-sm font-medium transition-colors', focusRing,
+                  activeFilterCount > 0 ? 'border-orange-700 bg-orange-700 text-white' : 'border-[var(--theme-border)] bg-[var(--theme-surface)] text-[var(--theme-text)] hover:border-orange-400')}>
+                <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
                 <span className="hidden sm:block">Filters</span>
-                {activeFilterCount > 0 && <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20 text-xs font-bold">{activeFilterCount}</span>}
+                <AnimatePresence>
+                  {activeFilterCount > 0 && (
+                    <motion.span key={activeFilterCount} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.5, opacity: 0 }} transition={spring.snappy}
+                      className="flex h-5 w-5 items-center justify-center rounded-full bg-white/25 text-xs font-bold">
+                      {activeFilterCount}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </motion.button>
             </div>
-            {cuisines.length > 0 && (
-              <div className="mt-3 flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-                <button onClick={() => setFilter('cuisineSlug', '')} className={cn('shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all', filters.cuisineSlug === '' ? 'bg-[var(--theme-primary)] text-white' : 'bg-[var(--theme-surface-elevated)] text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]')}>All</button>
-                {cuisines.slice(0, 12).map(c => (
-                  <button key={c.id} onClick={() => setFilter('cuisineSlug', filters.cuisineSlug === c.slug ? '' : c.slug)}
-                    className={cn('shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all', filters.cuisineSlug === c.slug ? 'bg-[var(--theme-primary)] text-white' : 'bg-[var(--theme-surface-elevated)] text-[var(--theme-text-muted)] hover:text-[var(--theme-text)]')}>
-                    {c.name}
-                  </button>
-                ))}
+            {cuisineChips.length > 0 && (
+              <div role="group" aria-label="Cuisine" className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+                <FilterChip group="cuisine" active={filters.cuisineSlug === ''} onClick={() => setFilter('cuisineSlug', '')}>
+                  All
+                </FilterChip>
+                {cuisineChips.map(c => {
+                  const active = filters.cuisineSlug === c.slug
+                  return (
+                    <FilterChip key={c.id} group="cuisine" active={active} onClick={() => setFilter('cuisineSlug', active ? '' : c.slug)}>
+                      {c.name}
+                    </FilterChip>
+                  )
+                })}
               </div>
             )}
           </div>
         </div>
 
-        <AnimatePresence>
-          {filtersOpen && (
-            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }}
-              className="overflow-hidden border-b border-[var(--theme-border)] bg-[var(--theme-surface)]">
-              <div className="container mx-auto max-w-6xl px-4 py-4">
-                <div className="flex flex-wrap gap-4 items-center">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-medium text-[var(--theme-text-muted)]">Sort:</span>
-                    {(['rating', 'deliveryTime', 'deliveryFee', 'name'] as SortKey[]).map(s => (
-                      <button key={s} onClick={() => setFilter('sortBy', s)}
-                        className={cn('rounded-full px-3 py-1.5 text-xs font-medium transition-all', filters.sortBy === s ? 'bg-[var(--theme-primary)] text-white' : 'bg-[var(--theme-background)] text-[var(--theme-text-muted)] border border-[var(--theme-border)]')}>
-                        {s === 'rating' ? '⭐ Rating' : s === 'deliveryTime' ? '⏱ Fastest' : s === 'deliveryFee' ? '🚚 Cheapest delivery' : '🔤 Name'}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer text-sm text-[var(--theme-text)]">
-                      <input type="checkbox" checked={filters.freeDelivery} onChange={e => setFilter('freeDelivery', e.target.checked)} className="accent-[var(--theme-primary)]" />Free delivery
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer text-sm text-[var(--theme-text)]">
-                      <input type="checkbox" checked={filters.openNow} onChange={e => setFilter('openNow', e.target.checked)} className="accent-[var(--theme-primary)]" />Open now
-                    </label>
-                  </div>
-                  {activeFilterCount > 0 && (
-                    <button onClick={() => setFilters(DEFAULT_FILTERS)} className="flex items-center gap-1 text-xs text-[var(--theme-danger)] ml-auto">
-                      <RotateCcw className="h-3.5 w-3.5" />Reset
-                    </button>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <FiltersPanel
+          id="restaurant-filters"
+          open={filtersOpen}
+          filters={filters}
+          onChange={setFilter}
+          onReset={() => setFilters(DEFAULT_FILTERS)}
+        />
 
         <div className="container mx-auto max-w-6xl px-4 py-6">
           {loading ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}</div>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" role="status" aria-label="Loading restaurants">{[...Array(6)].map((_, i) => <SkeletonCard key={i} />)}</div>
           ) : displayed.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-              <Search className="h-12 w-12 text-[var(--theme-text-muted)] opacity-30" />
+            <motion.div variants={fadeUp} initial="hidden" animate="visible" className="flex flex-col items-center justify-center gap-3 py-20 text-center">
+              <span className="grid h-16 w-16 place-items-center rounded-full bg-[var(--theme-surface-elevated)]">
+                <Search className="h-7 w-7 text-[var(--theme-text-muted)]" aria-hidden="true" />
+              </span>
               <p className="text-lg font-semibold text-[var(--theme-text)]">No restaurants found</p>
               <p className="text-sm text-[var(--theme-text-muted)]">Try adjusting your filters or search</p>
-              <button onClick={() => { setSearch(''); setFilters(DEFAULT_FILTERS) }} className="text-[var(--theme-primary)] text-sm font-medium">Clear filters</button>
-            </div>
+              <motion.button {...press} type="button" onClick={resetAll} className={cn('mt-2 h-10 rounded-full bg-orange-700 px-5 text-sm font-semibold text-white hover:bg-orange-800', focusRing)}>Clear filters</motion.button>
+            </motion.div>
           ) : (
             <>
-              <p className="text-sm text-[var(--theme-text-muted)] mb-5">{displayed.length} restaurant{displayed.length !== 1 ? 's' : ''} available</p>
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {displayed.map((r, i) => <RestaurantCard key={r.id} restaurant={r} index={i} />)}
-              </div>
+              <p className="mb-5 text-sm text-[var(--theme-text-muted)]" aria-live="polite">{displayed.length} restaurant{displayed.length !== 1 ? 's' : ''} available</p>
+              <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {displayed.map(r => <RestaurantCard key={r.id} restaurant={r} />)}
+                </AnimatePresence>
+              </ul>
             </>
           )}
         </div>
@@ -229,9 +193,11 @@ export default function RestaurantsPage() {
 
       <AnimatePresence>
         {totalItems > 0 && (
-          <motion.button initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 80, opacity: 0 }}
-            onClick={() => setCartOpen(true)} className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full bg-[var(--theme-primary)] px-5 py-3 text-white shadow-2xl font-semibold text-sm">
-            <ShoppingCart className="h-4 w-4" />{totalItems}
+          <motion.button {...press} type="button" variants={floatUp} initial="hidden" animate="visible" exit="exit"
+            onClick={() => setCartOpen(true)}
+            aria-label={`Open cart, ${totalItems} item${totalItems !== 1 ? 's' : ''}`}
+            className={cn('fixed bottom-6 right-6 z-30 flex h-12 items-center gap-2 rounded-full bg-orange-700 px-5 text-sm font-semibold text-white shadow-2xl shadow-orange-900/30 hover:bg-orange-800', focusRing)}>
+            <ShoppingCart className="h-4 w-4" aria-hidden="true" />{totalItems}
           </motion.button>
         )}
       </AnimatePresence>

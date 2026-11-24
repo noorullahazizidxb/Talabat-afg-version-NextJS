@@ -5,7 +5,6 @@ import Layout from '@/components/Layout'
 import { I18nProvider } from '@/utils/i18n/i18nContext'
 import { RTLWrapper } from '@/components/i18n/RTLWrapper'
 import { AuthProvider } from '@/components/auth/AuthProvider'
-import Footer from '@/components/Footer'
 import { ThemeTokensProvider } from '@/theme/ThemeTokensProvider'
 import { createThemeBootstrapScript } from '@/theme/theme-runtime'
 import { readThemeTokenFileSync } from '@/theme/theme-token-server'
@@ -39,7 +38,6 @@ export default function RootLayout({
               <AuthProvider>
                 <Layout>
                   {children}
-                  <Footer />
                 </Layout>
               </AuthProvider>
             </RTLWrapper>
